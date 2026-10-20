@@ -111,8 +111,7 @@
     <a class="hide-m" href="#faq">FAQ</a>
     <span class="chip">⚡ <b id="balChip">300</b> credits</span>
     <button class="btn-ghost btn-sm" id="btnHistory">History</button>
-    <span id="authArea"><button class="btn-ghost btn-sm" id="btnLogin">Log in</button>
-    <button class="btn btn-sm" id="btnSignup">Sign up free</button></span>
+    <button class="btn btn-sm" id="btnActivateNav">🔑 Activate Code</button>
   </div>
 </div></nav>
 
@@ -123,7 +122,7 @@
     <a href="#studio"><button class="btn gen-btn">🎧 Open the Studio</button></a>
     <a href="#pricing"><button class="btn-ghost gen-btn">See credit packs</button></a>
   </div>
-  <div class="badges"><span>✅ 1,000 free credits on sign-up</span><span>✅ 10,000 credits = $1</span><span>✅ 1 credit = 1 character</span><span>✅ MP3 &amp; WAV download</span></div>
+  <div class="badges"><span>✅ 300 free trial credits — no account needed</span><span>✅ 10,000 credits = $1</span><span>✅ 1 credit = 1 character</span><span>✅ MP3 &amp; WAV download</span></div>
 </header>
 
 <section id="studio"><div class="wrap"><div class="card">
@@ -163,7 +162,7 @@
   <h2 class="sec">How it works</h2>
   <p class="sub">Three simple steps — no software to install, ever.</p>
   <div class="steps">
-    <div class="step"><div class="n">1</div><b>Create a free account</b><p class="note">Sign up in 20 seconds and get 1,000 welcome credits. No card required.</p></div>
+    <div class="step"><div class="n">1</div><b>Try it free</b><p class="note">You start with 300 free credits instantly — no account, no card, nothing to install.</p></div>
     <div class="step"><div class="n">2</div><b>Paste your script &amp; pick a voice</b><p class="note">Choose from natural US and UK voices — Adam is our signature narrator voice.</p></div>
     <div class="step"><div class="n">3</div><b>Generate &amp; download</b><p class="note">Your voiceover is created right on your device. Download it as MP3 or WAV and use it anywhere.</p></div>
   </div>
@@ -179,8 +178,8 @@
 <section id="faq"><div class="wrap">
   <h2 class="sec">Frequently asked questions</h2>
   <p class="sub"></p>
-  <details><summary>Is Adam Voice really free to start?</summary><p>Yes. You get 300 trial credits instantly as a guest, and 1,000 free credits when you create an account. No credit card is needed for the free credits.</p></details>
-  <details><summary>How do credits work?</summary><p>1 credit = 1 character (including spaces). A 1,000-character script costs 1,000 credits. At $1 for 10,000 credits, a full 10-minute YouTube narration costs about one dollar.</p></details>
+  <details><summary>Is Adam Voice really free to start?</summary><p>Yes. Every visitor gets 300 free trial credits instantly — no account and no credit card needed. When those run out, buy any credit pack and we email you an activation code; enter it with the "Activate Code" button and your credits are added instantly.</p></details>
+  <details><summary>How do credits work?</summary><p>1 credit = 1 character (including spaces). A 1,000-character script costs 1,000 credits. At $1 for 10,000 credits, a full 10-minute YouTube narration costs about one dollar. Paid credits are unlocked with the activation code we email you after purchase.</p></details>
   <details><summary>Where does the voice generation happen?</summary><p>Entirely in your browser, using the open-source Kokoro AI voice model. That is how we keep prices this low — there is no expensive server between you and the voice. Your scripts stay on your device.</p></details>
   <details><summary>Can I use the audio commercially?</summary><p>Yes. Voiceovers you generate with paid or free credits can be used in your monetized videos, ads, podcasts and client work.</p></details>
   <details><summary>Do credits expire?</summary><p>No. Credit packs never expire. Use them today or next year.</p></details>
@@ -192,17 +191,15 @@
   Made for creators, YouTubers and storytellers.
 </div></footer>
 
-<!-- AUTH MODAL -->
-<div class="modal-bg" id="authModal"><div class="modal">
+<!-- ACTIVATE MODAL -->
+<div class="modal-bg" id="actModal"><div class="modal">
   <button class="x" data-close>✕</button>
-  <h3 id="authTitle">Create your free account</h3>
-  <p class="note" id="authSub">Get 1,000 welcome credits instantly.</p>
-  <div class="f" id="nameField"><label class="lbl">Your name</label><input type="text" id="auName" placeholder="e.g. Alex Smith"></div>
-  <div class="f"><label class="lbl">Email</label><input type="email" id="auEmail" placeholder="you@example.com"></div>
-  <div class="f"><label class="lbl">Password</label><input type="password" id="auPass" placeholder="Minimum 6 characters"></div>
-  <p class="status err" id="authErr"></p>
-  <div class="f"><button class="btn" style="width:100%" id="authGo">Sign up &amp; claim 1,000 credits</button></div>
-  <p class="switch" id="authSwitch">Already have an account? <a href="#" id="authToggle">Log in</a></p>
+  <h3>🔑 Activate your credits</h3>
+  <p class="note">After buying a credit pack, we email you an activation code. Paste it here and your credits are added instantly. Each code works once.</p>
+  <div class="f"><label class="lbl">Activation code</label><input type="text" id="actCode" placeholder="AV-10000-XXXXXXXX-XXXXXXXXXX" style="text-transform:uppercase"></div>
+  <p class="status" id="actMsg"></p>
+  <div class="f"><button class="btn btn-teal" style="width:100%" id="actGo">Activate credits</button></div>
+  <p class="switch">Don't have a code yet? <a href="#pricing" id="actBuyLink">See credit packs</a></p>
 </div></div>
 
 <!-- BUY MODAL -->
@@ -228,8 +225,10 @@
    payment provider (e.g. Gumroad / Lemon Squeezy) and paste each product
    link below. Buy buttons then send customers straight to checkout.   */
 const PAYMENT_LINKS = { starter:"https://adamvoiceai.gumroad.com/l/xrlelg", creator:"https://adamvoiceai.gumroad.com/l/qperyn", pro:"https://adamvoiceai.gumroad.com/l/ntexqs", studio:"https://adamvoiceai.gumroad.com/l/ynzdvg", empire:"https://adamvoiceai.gumroad.com/l/qmxubu" };
-const WELCOME_CREDITS = 1000;
 const GUEST_CREDITS   = 300;
+/* Activation codes are issued ONLY by the store owner after a purchase.
+   Verification key for owner-issued codes (see admin.html — owner-only page). */
+const CODE_KEY = "23022f340423ee14a7ef5d2aea1760877b703a4a50dad56df2603a18de1374df";
 
 const PACKS = [
   {id:"starter", name:"Starter", price:1,  credits:10000,  note:"Perfect for your first videos"},
@@ -253,58 +252,34 @@ const VOICES = [
 ];
 let selectedVoice = "am_adam";
 
-/* ================= STORAGE / ACCOUNTS ================= */
+/* ================= BALANCE / ACTIVATION CODES ================= */
 const $ = s => document.querySelector(s);
-const store = {
-  get users(){ try{return JSON.parse(localStorage.getItem("av_users")||"{}")}catch(e){return{}} },
-  set users(v){ localStorage.setItem("av_users", JSON.stringify(v)) },
-  get session(){ return localStorage.getItem("av_session")||"" },
-  set session(v){ v?localStorage.setItem("av_session",v):localStorage.removeItem("av_session") },
-  get guest(){ let g=localStorage.getItem("av_guest"); if(g===null){localStorage.setItem("av_guest",String(GUEST_CREDITS)); return GUEST_CREDITS} return parseInt(g)||0 },
-  set guest(v){ localStorage.setItem("av_guest", String(Math.max(0,v))) },
-};
 async function sha256(str){ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("") }
-function currentUser(){ const e=store.session; return e? store.users[e]||null : null }
-function balance(){ const u=currentUser(); return u? u.credits : store.guest }
-function spend(n){ const u=currentUser(); if(u){ const us=store.users; us[u.email].credits-=n; store.users=us } else store.guest = store.guest - n; refreshBalance() }
-function addHistory(item){ const u=currentUser(); const key=u? "av_hist_"+u.email : "av_hist_guest"; const h=JSON.parse(localStorage.getItem(key)||"[]"); h.unshift(item); localStorage.setItem(key, JSON.stringify(h.slice(0,30))) }
+function balance(){ let b=localStorage.getItem("av_balance");
+  if(b===null){ const old=localStorage.getItem("av_guest"); b = old!==null? old : String(GUEST_CREDITS); localStorage.setItem("av_balance", b); }
+  return parseInt(b)||0 }
+function setBalance(v){ localStorage.setItem("av_balance", String(Math.max(0,Math.floor(v)))); refreshBalance() }
+function spend(n){ setBalance(balance()-n) }
+function addHistory(item){ const h=JSON.parse(localStorage.getItem("av_hist")||"[]"); h.unshift(item); localStorage.setItem("av_hist", JSON.stringify(h.slice(0,30))) }
+function usedCodes(){ try{return JSON.parse(localStorage.getItem("av_used_codes")||"[]")}catch(e){return[]} }
+function refreshBalance(){ const b=balance(); $("#balChip").textContent=b.toLocaleString(); $("#balBig").textContent=b.toLocaleString() }
 
-function refreshBalance(){
-  const b=balance(); $("#balChip").textContent=b.toLocaleString(); $("#balBig").textContent=b.toLocaleString();
-  const u=currentUser(), area=$("#authArea");
-  if(u){ area.innerHTML = `<span class="chip">👤 ${u.name.split(" ")[0]}</span> <button class="btn-ghost btn-sm" id="btnOut">Log out</button>`;
-    $("#btnOut").onclick=()=>{ store.session=""; refreshBalance() };
-  } else { area.innerHTML = `<button class="btn-ghost btn-sm" id="btnLogin">Log in</button> <button class="btn btn-sm" id="btnSignup">Sign up free</button>`;
-    $("#btnLogin").onclick=()=>openAuth("login"); $("#btnSignup").onclick=()=>openAuth("signup"); }
-}
-
-/* ================= AUTH UI ================= */
-let authMode="signup";
-function openAuth(mode){ authMode=mode; $("#authModal").style.display="flex"; $("#authErr").textContent="";
-  const su = mode==="signup";
-  $("#authTitle").textContent = su? "Create your free account":"Welcome back";
-  $("#authSub").textContent = su? `Get ${WELCOME_CREDITS.toLocaleString()} welcome credits instantly.`:"Log in to use your credits.";
-  $("#nameField").style.display = su? "block":"none";
-  $("#authGo").textContent = su? `Sign up & claim ${WELCOME_CREDITS.toLocaleString()} credits`:"Log in";
-  $("#authSwitch").innerHTML = su? `Already have an account? <a href="#" id="authToggle">Log in</a>`:`New here? <a href="#" id="authToggle">Create a free account</a>`;
-  $("#authToggle").onclick=e=>{e.preventDefault(); openAuth(su?"login":"signup")};
-}
-$("#authGo").onclick = async ()=>{
-  const email=$("#auEmail").value.trim().toLowerCase(), pass=$("#auPass").value, err=$("#authErr");
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent="Please enter a valid email address.";
-  if(pass.length<6) return err.textContent="Password must be at least 6 characters.";
-  const users=store.users, hash=await sha256(email+":"+pass);
-  if(authMode==="signup"){
-    const name=$("#auName").value.trim(); if(!name) return err.textContent="Please enter your name.";
-    if(users[email]) return err.textContent="This email already has an account — please log in instead.";
-    users[email]={name, email, pass:hash, credits:WELCOME_CREDITS, created:Date.now()};
-    store.users=users; store.session=email; closeModals(); refreshBalance();
-    setStatus(`🎉 Welcome, ${name.split(" ")[0]}! ${WELCOME_CREDITS.toLocaleString()} credits added to your account.`,"ok");
-  } else {
-    const u=users[email];
-    if(!u || u.pass!==hash) return err.textContent="Email or password is incorrect.";
-    store.session=email; closeModals(); refreshBalance(); setStatus(`Welcome back, ${u.name.split(" ")[0]}!`,"ok");
-  }
+/* ================= ACTIVATE UI ================= */
+function openActivate(){ $("#actModal").style.display="flex"; $("#actMsg").textContent=""; $("#actMsg").className="status"; setTimeout(()=>$("#actCode").focus(),80) }
+$("#btnActivateNav").onclick = openActivate;
+$("#actBuyLink").onclick = ()=> closeModals();
+$("#actGo").onclick = async ()=>{
+  const raw=$("#actCode").value.trim().toUpperCase(), msg=$("#actMsg");
+  const m = raw.match(/^AV-(\d{4,7})-([A-Z2-9]{8})-([0-9A-F]{10})$/);
+  if(!m){ msg.className="status err"; msg.textContent="That code doesn't look right. Check it and try again — format: AV-10000-XXXXXXXX-XXXXXXXXXX"; return }
+  const credits=parseInt(m[1]), serial=m[2], check=m[3].toLowerCase();
+  const expect=(await sha256(CODE_KEY+"|"+serial+"|"+credits)).slice(0,10);
+  if(check!==expect){ msg.className="status err"; msg.textContent="This code is not valid. Codes are issued by Adam Voice after a purchase — if you bought a pack, check your email for the exact code."; return }
+  if(usedCodes().includes(raw)){ msg.className="status err"; msg.textContent="This code has already been used on this device."; return }
+  const used=usedCodes(); used.push(raw); localStorage.setItem("av_used_codes", JSON.stringify(used));
+  setBalance(balance()+credits); $("#actCode").value="";
+  msg.className="status ok"; msg.textContent=`🎉 ${credits.toLocaleString()} credits added! Your new balance is ${balance().toLocaleString()} credits.`;
+  setStatus(`🎉 Activation code accepted — ${credits.toLocaleString()} credits added to your balance.`,"ok");
 };
 
 /* ================= PRICING / BUY ================= */
@@ -324,11 +299,11 @@ window.openBuy = id=>{
   $("#buyTitle").textContent = `${buyPack.name} pack — $${buyPack.price}`;
   $("#buyDesc").innerHTML = `You get <b style="color:var(--txt)">${buyPack.credits.toLocaleString()} credits</b> (≈ ${Math.round(buyPack.credits/900)} minutes of voiceover). Credits are added to your account right after payment and never expire.`;
   const link = PAYMENT_LINKS[buyPack.id];
-  $("#buyNote").textContent = link? "Secure checkout opens in a new tab. Use the same email as your Adam Voice account so credits land in the right place."
-    : "Online card checkout is being activated for this store right now. Your free credits already work — sign up to claim 1,000 free credits while checkout finishes setting up.";
+  $("#buyNote").textContent = link? "Secure checkout opens in a new tab (Gumroad). After payment, your activation code is emailed to you — come back here and press “Activate Code” to add your credits instantly."
+    : "Online card checkout is being activated for this store right now. Your 300 free trial credits already work.";
   $("#buyModal").style.display="flex";
 };
-$("#buyGo").onclick=()=>{ const link=PAYMENT_LINKS[buyPack.id]; if(link) window.open(link,"_blank"); else { closeModals(); openAuth("signup"); } };
+$("#buyGo").onclick=()=>{ const link=PAYMENT_LINKS[buyPack.id]; if(link) window.open(link,"_blank"); else { closeModals(); openActivate(); } };
 
 /* ================= STUDIO ================= */
 function renderVoices(){
@@ -344,8 +319,8 @@ function setStatus(msg, cls){ const s=$("#status"); s.textContent=msg; s.classNa
 function closeModals(){ document.querySelectorAll(".modal-bg").forEach(m=>m.style.display="none") }
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeModals);
 document.querySelectorAll(".modal-bg").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) closeModals() }));
-$("#btnHistory").onclick=()=>{ const u=currentUser(); const key=u? "av_hist_"+u.email:"av_hist_guest";
-  const h=JSON.parse(localStorage.getItem(key)||"[]");
+$("#btnHistory").onclick=()=>{
+  const h=JSON.parse(localStorage.getItem("av_hist")||"[]");
   $("#histList").innerHTML = h.length? h.map(x=>`<div class="hist-item"><span><b>${x.voice}</b> · ${x.title}…</span><span>-${x.cost.toLocaleString()} cr</span></div>`).join("") : `<p class="note">No generations yet. Your voiceovers will appear here.</p>`;
   $("#histModal").style.display="flex"; };
 
@@ -394,8 +369,8 @@ async function loadModel(){
 $("#btnGen").onclick = async ()=>{
   const text=$("#txt").value.trim(); const cost=textStats();
   if(!text) return setStatus("Please paste or type your script first.","err");
-  if(cost>balance()){ setStatus(`You need ${cost.toLocaleString()} credits but only have ${balance().toLocaleString()}. `,"err");
-    if(!currentUser()) openAuth("signup"); else openBuy("creator"); return; }
+  if(cost>balance()){ setStatus(`You need ${cost.toLocaleString()} credits but only have ${balance().toLocaleString()}. Buy a credit pack below, then activate your code.`,"err");
+    openActivate(); return; }
   const btn=$("#btnGen"); btn.disabled=true; const pr=$("#prog"); pr.style.display="block"; pr.value=0;
   try{
     const model=await loadModel();
@@ -424,8 +399,6 @@ $("#btnMp3").onclick=()=>{ if(!lastSamples) return; const b=mp3Blob(lastSamples,
 
 /* init */
 renderVoices(); renderPacks(); refreshBalance(); textStats();
-$("#btnLogin") && ($("#btnLogin").onclick=()=>openAuth("login"));
-$("#btnSignup") && ($("#btnSignup").onclick=()=>openAuth("signup"));
 </script>
 </body>
 </html>
