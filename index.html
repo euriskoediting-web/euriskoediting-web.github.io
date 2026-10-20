@@ -228,14 +228,14 @@ const PAYMENT_LINKS = { starter:"https://adamvoiceai.gumroad.com/l/xrlelg", crea
 const GUEST_CREDITS   = 300;
 /* Activation codes are issued ONLY by the store owner after a purchase.
    Verification key for owner-issued codes (see admin.html — owner-only page). */
-const CODE_KEY = "23022f340423ee14a7ef5d2aea1760877b703a4a50dad56df2603a18de1374df";
+const CODE_KEY = "e075783e8ae6865816330ef1644fe646dc01f192661ded97437512f200cca83c";
 
 const PACKS = [
-  {id:"starter", name:"Starter", price:1,  credits:10000,  note:"Perfect for your first videos"},
-  {id:"creator", name:"Creator", price:5,  credits:55000,  note:"+10% bonus credits", hot:true},
-  {id:"pro",     name:"Pro",     price:10, credits:120000, note:"+20% bonus credits"},
-  {id:"studio",  name:"Studio",  price:25, credits:325000, note:"+30% bonus credits"},
-  {id:"empire",  name:"Empire",  price:50, credits:700000, note:"+40% bonus credits"},
+  {id:"starter", name:"Starter", price:1,  credits:10000,    note:"Perfect for your first videos"},
+  {id:"creator", name:"Creator", price:5,  credits:1000000,  note:"20x the value per $1", hot:true},
+  {id:"pro",     name:"Pro",     price:10, credits:10000000, note:"100x the value per $1"},
+  {id:"studio",  name:"Studio",  price:25, credits:50000000, note:"200x the value per $1"},
+  {id:"empire",  name:"Empire",  price:50, credits:0, life:true, note:"Pay once — unlimited forever"},
 ];
 const VOICES = [
   {id:"am_adam",   name:"Adam",   desc:"US Male · Signature narrator"},
@@ -255,14 +255,16 @@ let selectedVoice = "am_adam";
 /* ================= BALANCE / ACTIVATION CODES ================= */
 const $ = s => document.querySelector(s);
 async function sha256(str){ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("") }
-function balance(){ let b=localStorage.getItem("av_balance");
+function isLife(){ return localStorage.getItem("av_lifetime")==="1" }
+function balance(){ if(isLife()) return Infinity; let b=localStorage.getItem("av_balance");
   if(b===null){ const old=localStorage.getItem("av_guest"); b = old!==null? old : String(GUEST_CREDITS); localStorage.setItem("av_balance", b); }
   return parseInt(b)||0 }
 function setBalance(v){ localStorage.setItem("av_balance", String(Math.max(0,Math.floor(v)))); refreshBalance() }
-function spend(n){ setBalance(balance()-n) }
+function spend(n){ if(isLife()) return; setBalance(balance()-n) }
 function addHistory(item){ const h=JSON.parse(localStorage.getItem("av_hist")||"[]"); h.unshift(item); localStorage.setItem("av_hist", JSON.stringify(h.slice(0,30))) }
 function usedCodes(){ try{return JSON.parse(localStorage.getItem("av_used_codes")||"[]")}catch(e){return[]} }
-function refreshBalance(){ const b=balance(); $("#balChip").textContent=b.toLocaleString(); $("#balBig").textContent=b.toLocaleString() }
+function refreshBalance(){ if(isLife()){ $("#balChip").textContent="♾️ Lifetime"; $("#balBig").textContent="♾️ Lifetime — unlimited"; return }
+  const b=balance(); $("#balChip").textContent=b.toLocaleString(); $("#balBig").textContent=b.toLocaleString() }
 
 /* ================= ACTIVATE UI ================= */
 function openActivate(){ $("#actModal").style.display="flex"; $("#actMsg").textContent=""; $("#actMsg").className="status"; setTimeout(()=>$("#actCode").focus(),80) }
@@ -270,14 +272,20 @@ $("#btnActivateNav").onclick = openActivate;
 $("#actBuyLink").onclick = ()=> closeModals();
 $("#actGo").onclick = async ()=>{
   const raw=$("#actCode").value.trim().toUpperCase(), msg=$("#actMsg");
-  const m = raw.match(/^AV-(\d{4,7})-([A-Z2-9]{8})-([0-9A-F]{10})$/);
-  if(!m){ msg.className="status err"; msg.textContent="That code doesn't look right. Check it and try again — format: AV-10000-XXXXXXXX-XXXXXXXXXX"; return }
-  const credits=parseInt(m[1]), serial=m[2], check=m[3].toLowerCase();
-  const expect=(await sha256(CODE_KEY+"|"+serial+"|"+credits)).slice(0,10);
+  const mLife = raw.match(/^AV-LIFE-([A-Z2-9]{8})-([0-9A-F]{10})$/);
+  const m = raw.match(/^AV-(\d{4,8})-([A-Z2-9]{8})-([0-9A-F]{10})$/);
+  if(!mLife && !m){ msg.className="status err"; msg.textContent="That code doesn't look right. Check it and try again — format: AV-10000-XXXXXXXX-XXXXXXXXXX"; return }
+  const serial = mLife? mLife[1] : m[2], check = (mLife? mLife[2] : m[3]).toLowerCase();
+  const amount = mLife? "LIFE" : String(parseInt(m[1]));
+  const expect=(await sha256(CODE_KEY+"|"+serial+"|"+amount)).slice(0,10);
   if(check!==expect){ msg.className="status err"; msg.textContent="This code is not valid. Codes are issued by Adam Voice after a purchase — if you bought a pack, check your email for the exact code."; return }
   if(usedCodes().includes(raw)){ msg.className="status err"; msg.textContent="This code has already been used on this device."; return }
   const used=usedCodes(); used.push(raw); localStorage.setItem("av_used_codes", JSON.stringify(used));
-  setBalance(balance()+credits); $("#actCode").value="";
+  $("#actCode").value="";
+  if(mLife){ localStorage.setItem("av_lifetime","1"); refreshBalance();
+    msg.className="status ok"; msg.textContent="🎉 LIFETIME ACCESS activated! You now have unlimited credits — forever. Enjoy!";
+    setStatus("🎉 Lifetime access activated — unlimited credits, forever!","ok"); return }
+  const credits=parseInt(m[1]); setBalance(balance()+credits);
   msg.className="status ok"; msg.textContent=`🎉 ${credits.toLocaleString()} credits added! Your new balance is ${balance().toLocaleString()} credits.`;
   setStatus(`🎉 Activation code accepted — ${credits.toLocaleString()} credits added to your balance.`,"ok");
 };
@@ -288,8 +296,8 @@ function renderPacks(){
   $("#packGrid").innerHTML = PACKS.map(p=>`
    <div class="pack ${p.hot?"hot":""}">${p.hot?'<div class="tag">MOST POPULAR</div>':""}
     <h3>${p.name}</h3><div class="price">$${p.price}</div>
-    <div class="credits">${p.credits.toLocaleString()} credits</div>
-    <div class="per">${p.note}<br>≈ ${Math.round(p.credits/900)} min of narration</div>
+    <div class="credits">${p.life? "♾️ Lifetime access" : p.credits.toLocaleString()+" credits"}</div>
+    <div class="per">${p.note}<br>${p.life? "Unlimited credits — never run out" : "≈ "+Math.round(p.credits/900).toLocaleString()+" min of narration"}</div>
     <ul><li>All 11 voices included</li><li>MP3 + WAV downloads</li><li>Commercial use allowed</li><li>Credits never expire</li></ul>
     <button class="btn ${p.hot?"btn-teal":""}" style="width:100%" onclick="openBuy('${p.id}')">Buy ${p.name}</button>
    </div>`).join("");
@@ -297,7 +305,9 @@ function renderPacks(){
 window.openBuy = id=>{
   buyPack = PACKS.find(p=>p.id===id);
   $("#buyTitle").textContent = `${buyPack.name} pack — $${buyPack.price}`;
-  $("#buyDesc").innerHTML = `You get <b style="color:var(--txt)">${buyPack.credits.toLocaleString()} credits</b> (≈ ${Math.round(buyPack.credits/900)} minutes of voiceover). Credits are added to your account right after payment and never expire.`;
+  $("#buyDesc").innerHTML = buyPack.life
+    ? `You get <b style="color:var(--txt)">♾️ LIFETIME access</b> — unlimited credits, forever. Pay once and never buy credits again. Your lifetime activation code is emailed to you right after payment.`
+    : `You get <b style="color:var(--txt)">${buyPack.credits.toLocaleString()} credits</b> (≈ ${Math.round(buyPack.credits/900).toLocaleString()} minutes of voiceover). Your activation code is emailed to you right after payment, and credits never expire.`;
   const link = PAYMENT_LINKS[buyPack.id];
   $("#buyNote").textContent = link? "Secure checkout opens in a new tab (Gumroad). After payment, your activation code is emailed to you — come back here and press “Activate Code” to add your credits instantly."
     : "Online card checkout is being activated for this store right now. Your 300 free trial credits already work.";

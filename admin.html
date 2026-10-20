@@ -34,10 +34,10 @@
     <label>Credit pack</label>
     <select id="pack">
       <option value="10000">Starter — 10,000 credits ($1)</option>
-      <option value="55000">Creator — 55,000 credits ($5)</option>
-      <option value="120000">Pro — 120,000 credits ($10)</option>
-      <option value="325000">Studio — 325,000 credits ($25)</option>
-      <option value="700000">Empire — 700,000 credits ($50)</option>
+      <option value="1000000">Creator — 1 Million credits ($5)</option>
+      <option value="10000000">Pro — 10 Million credits ($10)</option>
+      <option value="50000000">Studio — 50 Million credits ($25)</option>
+      <option value="LIFE">Empire — LIFETIME access, unlimited ($50)</option>
     </select>
     <label>How many codes?</label>
     <select id="qty"><option>1</option><option>3</option><option>5</option><option>10</option></select>
@@ -48,7 +48,7 @@
 </div>
 
 <script>
-const CODE_KEY = "23022f340423ee14a7ef5d2aea1760877b703a4a50dad56df2603a18de1374df";
+const CODE_KEY = "e075783e8ae6865816330ef1644fe646dc01f192661ded97437512f200cca83c";
 const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 async function sha256(str){ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("") }
 document.querySelector("#unlock").onclick = async ()=>{
