@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adam Voice — AI Voiceover Studio | Text to Speech in Your Browser</title>
+<meta name="description" content="Adam Voice turns your text into natural, studio-quality voiceovers right in your browser. Start free with 1,000 credits. 10,000 credits for just $1.">
+<style>
+  :root{
+    --bg:#0b0e1a; --bg2:#11162b; --card:#151b33; --card2:#1a2140;
+    --line:#26305a; --txt:#eef1ff; --mut:#9aa5d0; --acc:#7c5cff; --acc2:#00d4a6;
+    --warn:#ffb020; --bad:#ff5c7a; --rad:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:radial-gradient(1100px 550px at 85% -10%,#2a1e63 0%,transparent 60%),radial-gradient(900px 500px at -10% 20%,#073f36 0%,transparent 55%),var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55}
+  a{color:var(--acc2);text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(11,14,26,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;gap:14px;padding:13px 0}
+  .logo{font-size:21px;font-weight:800;letter-spacing:.3px}
+  .logo span{color:var(--acc2)}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .chip{background:var(--card2);border:1px solid var(--line);padding:7px 13px;border-radius:999px;font-size:13.5px;font-weight:600}
+  .chip b{color:var(--acc2)}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:11px;font-weight:700;transition:.15s}
+  .btn{background:linear-gradient(135deg,var(--acc),#5a3dff);color:#fff;padding:10px 18px;font-size:14.5px}
+  .btn:hover{filter:brightness(1.13)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-teal{background:linear-gradient(135deg,#00b894,#00d4a6);color:#04231b}
+  .btn-ghost{background:transparent;color:var(--txt);border:1px solid var(--line);padding:9px 16px;font-size:14.5px}
+  .btn-ghost:hover{border-color:var(--acc)}
+  .btn-sm{padding:7px 13px;font-size:13.5px}
+  /* HERO */
+  .hero{text-align:center;padding:64px 0 30px}
+  .hero h1{font-size:clamp(32px,5.4vw,54px);line-height:1.12;font-weight:900}
+  .hero h1 .grad{background:linear-gradient(90deg,var(--acc2),#8f7bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--mut);font-size:18px;max-width:720px;margin:16px auto 0}
+  .hero .cta{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .badges{margin-top:22px;color:var(--mut);font-size:13.5px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+  /* CARDS / STUDIO */
+  section{padding:34px 0}
+  .card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:var(--rad);padding:24px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+  h2.sec{font-size:27px;font-weight:850;margin-bottom:6px}
+  p.sub{color:var(--mut);margin-bottom:18px}
+  textarea{width:100%;min-height:190px;background:#0d1122;border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:15px;font-size:16px;font-family:inherit;resize:vertical}
+  textarea:focus{outline:2px solid var(--acc);border-color:transparent}
+  .stats{display:flex;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:14px;margin:10px 2px 4px}
+  .stats b{color:var(--txt)}
+  .row{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px}
+  .row > div{flex:1;min-width:220px}
+  label.lbl{display:block;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px}
+  select,input[type=text],input[type=email],input[type=password]{width:100%;background:#0d1122;border:1px solid var(--line);border-radius:11px;color:var(--txt);padding:11px 13px;font-size:15px;font-family:inherit}
+  select:focus,input:focus{outline:2px solid var(--acc);border-color:transparent}
+  input[type=range]{width:100%;accent-color:var(--acc)}
+  .gen-row{display:flex;align-items:center;gap:14px;margin-top:20px;flex-wrap:wrap}
+  .gen-btn{font-size:17px;padding:14px 30px}
+  .status{font-size:14.5px;color:var(--mut)}
+  .status.err{color:var(--bad)} .status.ok{color:var(--acc2)}
+  progress{width:100%;height:10px;margin-top:12px;display:none;accent-color:var(--acc2)}
+  .audio-box{margin-top:18px;display:none}
+  audio{width:100%}
+  .dl-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .note{font-size:13px;color:var(--mut);margin-top:10px}
+  /* VOICES */
+  .voices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .voice{border:1px solid var(--line);background:#0d1122;border-radius:12px;padding:12px;text-align:left;color:var(--txt)}
+  .voice b{display:block;font-size:15px}
+  .voice small{color:var(--mut)}
+  .voice.sel{border-color:var(--acc2);background:#0f2c26}
+  /* PRICING */
+  .packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:14px}
+  .pack{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:var(--rad);padding:22px;text-align:center;position:relative}
+  .pack.hot{border-color:var(--acc2);box-shadow:0 0 0 1px var(--acc2),0 16px 34px rgba(0,0,0,.4)}
+  .pack .tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--acc2);color:#04231b;font-size:11.5px;font-weight:800;padding:3px 11px;border-radius:999px}
+  .pack h3{font-size:17px}
+  .pack .price{font-size:34px;font-weight:900;margin:8px 0 2px}
+  .pack .credits{color:var(--acc2);font-weight:800;font-size:16.5px}
+  .pack .per{color:var(--mut);font-size:13px;margin:4px 0 14px}
+  .pack ul{list-style:none;color:var(--mut);font-size:13.5px;margin-bottom:16px}
+  .pack ul li{margin:5px 0}
+  /* STEPS / FAQ */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:20px}
+  .step .n{width:34px;height:34px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:10px}
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:700}
+  details p{color:var(--mut);margin-top:8px;font-size:14.5px}
+  /* MODAL */
+  .modal-bg{position:fixed;inset:0;background:rgba(4,6,14,.78);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:430px;width:100%;padding:26px;max-height:92vh;overflow:auto}
+  .modal h3{font-size:21px;margin-bottom:6px}
+  .modal .f{margin-top:13px}
+  .modal .x{float:right;background:none;color:var(--mut);font-size:21px;padding:0}
+  .switch{font-size:14px;color:var(--mut);margin-top:14px;text-align:center}
+  .hist{margin-top:8px}
+  .hist-item{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:8px 2px;font-size:13.5px;color:var(--mut)}
+  .hist-item b{color:var(--txt)}
+  footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--mut);font-size:13.5px;text-align:center;margin-top:20px}
+  @media(max-width:640px){.hero{padding:44px 0 20px}.nav-links .hide-m{display:none}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap nav-in">
+  <div class="logo">🎙️ Adam<span>Voice</span></div>
+  <div class="nav-links">
+    <a class="hide-m" href="#studio">Studio</a>
+    <a class="hide-m" href="#pricing">Pricing</a>
+    <a class="hide-m" href="#faq">FAQ</a>
+    <span class="chip">⚡ <b id="balChip">300</b> credits</span>
+    <button class="btn-ghost btn-sm" id="btnHistory">History</button>
+    <span id="authArea"><button class="btn-ghost btn-sm" id="btnLogin">Log in</button>
+    <button class="btn btn-sm" id="btnSignup">Sign up free</button></span>
+  </div>
+</div></nav>
+
+<header class="hero wrap">
+  <h1>Turn text into a real human-sounding <span class="grad">voiceover</span></h1>
+  <p>Adam Voice is an AI voiceover studio that runs 100% in your browser. No installs, no waiting for a server — paste your script, pick a voice, download your audio.</p>
+  <div class="cta">
+    <a href="#studio"><button class="btn gen-btn">🎧 Open the Studio</button></a>
+    <a href="#pricing"><button class="btn-ghost gen-btn">See credit packs</button></a>
+  </div>
+  <div class="badges"><span>✅ 1,000 free credits on sign-up</span><span>✅ 10,000 credits = $1</span><span>✅ 1 credit = 1 character</span><span>✅ MP3 &amp; WAV download</span></div>
+</header>
+
+<section id="studio"><div class="wrap"><div class="card">
+  <h2 class="sec">🎙️ Voiceover Studio</h2>
+  <p class="sub">Write or paste your script below. Generation happens on your own device, so your text never leaves your browser.</p>
+  <textarea id="txt" placeholder="Paste your English script here… e.g. Welcome to my channel. Today we are going to talk about something amazing."></textarea>
+  <div class="stats">
+    <span>Characters: <b id="stChars">0</b></span>
+    <span>Words: <b id="stWords">0</b></span>
+    <span>Estimated audio: <b id="stMins">0.0 min</b></span>
+    <span>Cost: <b id="stCost">0</b> credits</span>
+  </div>
+  <label class="lbl" style="margin-top:16px">Choose a voice</label>
+  <div class="voices" id="voiceGrid"></div>
+  <div class="row">
+    <div><label class="lbl">Speed: <span id="spdVal">1.00×</span></label>
+    <input type="range" id="spd" min="0.8" max="1.2" step="0.05" value="1"></div>
+    <div><label class="lbl">Your balance</label>
+    <div class="chip" style="display:inline-block">⚡ <b id="balBig">300</b> credits available</div></div>
+  </div>
+  <div class="gen-row">
+    <button class="btn gen-btn" id="btnGen">🔊 Generate Voiceover</button>
+    <span class="status" id="status">First generation downloads the AI voice model once (~90 MB) and caches it — after that it is instant and even works offline.</span>
+  </div>
+  <progress id="prog" max="100" value="0"></progress>
+  <div class="audio-box" id="audioBox">
+    <audio id="player" controls></audio>
+    <div class="dl-row">
+      <button class="btn btn-teal" id="btnWav">⬇ Download WAV</button>
+      <button class="btn-ghost" id="btnMp3">⬇ Download MP3</button>
+    </div>
+    <p class="note">Tip: WAV is the full studio quality. MP3 is smaller and ready for YouTube, TikTok and Reels.</p>
+  </div>
+</div></div></section>
+
+<section><div class="wrap">
+  <h2 class="sec">How it works</h2>
+  <p class="sub">Three simple steps — no software to install, ever.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><b>Create a free account</b><p class="note">Sign up in 20 seconds and get 1,000 welcome credits. No card required.</p></div>
+    <div class="step"><div class="n">2</div><b>Paste your script &amp; pick a voice</b><p class="note">Choose from natural US and UK voices — Adam is our signature narrator voice.</p></div>
+    <div class="step"><div class="n">3</div><b>Generate &amp; download</b><p class="note">Your voiceover is created right on your device. Download it as MP3 or WAV and use it anywhere.</p></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="wrap">
+  <h2 class="sec">💎 Credit packs</h2>
+  <p class="sub">Simple, honest pricing: <b style="color:var(--txt)">$1 = 10,000 credits</b>, and 1 credit = 1 character of voiceover. Bigger packs include bonus credits. Credits never expire.</p>
+  <div class="packs" id="packGrid"></div>
+  <p class="note" style="margin-top:14px">What does that mean in real terms? 10,000 credits ≈ 10,000 characters ≈ about 1,600 words ≈ roughly 11 minutes of finished narration — for one dollar.</p>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <h2 class="sec">Frequently asked questions</h2>
+  <p class="sub"></p>
+  <details><summary>Is Adam Voice really free to start?</summary><p>Yes. You get 300 trial credits instantly as a guest, and 1,000 free credits when you create an account. No credit card is needed for the free credits.</p></details>
+  <details><summary>How do credits work?</summary><p>1 credit = 1 character (including spaces). A 1,000-character script costs 1,000 credits. At $1 for 10,000 credits, a full 10-minute YouTube narration costs about one dollar.</p></details>
+  <details><summary>Where does the voice generation happen?</summary><p>Entirely in your browser, using the open-source Kokoro AI voice model. That is how we keep prices this low — there is no expensive server between you and the voice. Your scripts stay on your device.</p></details>
+  <details><summary>Can I use the audio commercially?</summary><p>Yes. Voiceovers you generate with paid or free credits can be used in your monetized videos, ads, podcasts and client work.</p></details>
+  <details><summary>Do credits expire?</summary><p>No. Credit packs never expire. Use them today or next year.</p></details>
+  <details><summary>Which voices are included?</summary><p>Every pack unlocks all voices: Adam, Michael, Onyx, Eric and Liam (US male), Daniel, George and Lewis (UK male), plus Heart, Bella and Emma (female).</p></details>
+</div></section>
+
+<footer><div class="wrap">
+  🎙️ Adam Voice — AI Voiceover Studio · Voices powered by the open-source Kokoro model (Apache-2.0).<br>
+  Made for creators, YouTubers and storytellers.
+</div></footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal"><div class="modal">
+  <button class="x" data-close>✕</button>
+  <h3 id="authTitle">Create your free account</h3>
+  <p class="note" id="authSub">Get 1,000 welcome credits instantly.</p>
+  <div class="f" id="nameField"><label class="lbl">Your name</label><input type="text" id="auName" placeholder="e.g. Alex Smith"></div>
+  <div class="f"><label class="lbl">Email</label><input type="email" id="auEmail" placeholder="you@example.com"></div>
+  <div class="f"><label class="lbl">Password</label><input type="password" id="auPass" placeholder="Minimum 6 characters"></div>
+  <p class="status err" id="authErr"></p>
+  <div class="f"><button class="btn" style="width:100%" id="authGo">Sign up &amp; claim 1,000 credits</button></div>
+  <p class="switch" id="authSwitch">Already have an account? <a href="#" id="authToggle">Log in</a></p>
+</div></div>
+
+<!-- BUY MODAL -->
+<div class="modal-bg" id="buyModal"><div class="modal">
+  <button class="x" data-close>✕</button>
+  <h3 id="buyTitle">Buy credits</h3>
+  <p class="note" id="buyDesc"></p>
+  <div class="f"><button class="btn btn-teal" style="width:100%" id="buyGo">Continue to secure checkout</button></div>
+  <p class="note" id="buyNote"></p>
+</div></div>
+
+<!-- HISTORY MODAL -->
+<div class="modal-bg" id="histModal"><div class="modal">
+  <button class="x" data-close>✕</button>
+  <h3>Your generations</h3>
+  <div class="hist" id="histList"></div>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script>
+/* ================= OWNER CONFIG =================
+   To activate card checkout: create the credit packs as products in your
+   payment provider (e.g. Gumroad / Lemon Squeezy) and paste each product
+   link below. Buy buttons then send customers straight to checkout.   */
+const PAYMENT_LINKS = { starter:"", creator:"", pro:"", studio:"", empire:"" };
+const WELCOME_CREDITS = 1000;
+const GUEST_CREDITS   = 300;
+
+const PACKS = [
+  {id:"starter", name:"Starter", price:1,  credits:10000,  note:"Perfect for your first videos"},
+  {id:"creator", name:"Creator", price:5,  credits:55000,  note:"+10% bonus credits", hot:true},
+  {id:"pro",     name:"Pro",     price:10, credits:120000, note:"+20% bonus credits"},
+  {id:"studio",  name:"Studio",  price:25, credits:325000, note:"+30% bonus credits"},
+  {id:"empire",  name:"Empire",  price:50, credits:700000, note:"+40% bonus credits"},
+];
+const VOICES = [
+  {id:"am_adam",   name:"Adam",   desc:"US Male · Signature narrator"},
+  {id:"am_michael",name:"Michael",desc:"US Male · Warm & clear"},
+  {id:"am_onyx",   name:"Onyx",   desc:"US Male · Deep & serious"},
+  {id:"am_eric",   name:"Eric",   desc:"US Male · Friendly"},
+  {id:"am_liam",   name:"Liam",   desc:"US Male · Young & energetic"},
+  {id:"bm_daniel", name:"Daniel", desc:"UK Male · Documentary"},
+  {id:"bm_george", name:"George", desc:"UK Male · Classic"},
+  {id:"bm_lewis",  name:"Lewis",  desc:"UK Male · Calm"},
+  {id:"af_heart",  name:"Heart",  desc:"US Female · Natural"},
+  {id:"af_bella",  name:"Bella",  desc:"US Female · Bright"},
+  {id:"bf_emma",   name:"Emma",   desc:"UK Female · Elegant"},
+];
+let selectedVoice = "am_adam";
+
+/* ================= STORAGE / ACCOUNTS ================= */
+const $ = s => document.querySelector(s);
+const store = {
+  get users(){ try{return JSON.parse(localStorage.getItem("av_users")||"{}")}catch(e){return{}} },
+  set users(v){ localStorage.setItem("av_users", JSON.stringify(v)) },
+  get session(){ return localStorage.getItem("av_session")||"" },
+  set session(v){ v?localStorage.setItem("av_session",v):localStorage.removeItem("av_session") },
+  get guest(){ let g=localStorage.getItem("av_guest"); if(g===null){localStorage.setItem("av_guest",String(GUEST_CREDITS)); return GUEST_CREDITS} return parseInt(g)||0 },
+  set guest(v){ localStorage.setItem("av_guest", String(Math.max(0,v))) },
+};
+async function sha256(str){ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("") }
+function currentUser(){ const e=store.session; return e? store.users[e]||null : null }
+function balance(){ const u=currentUser(); return u? u.credits : store.guest }
+function spend(n){ const u=currentUser(); if(u){ const us=store.users; us[u.email].credits-=n; store.users=us } else store.guest = store.guest - n; refreshBalance() }
+function addHistory(item){ const u=currentUser(); const key=u? "av_hist_"+u.email : "av_hist_guest"; const h=JSON.parse(localStorage.getItem(key)||"[]"); h.unshift(item); localStorage.setItem(key, JSON.stringify(h.slice(0,30))) }
+
+function refreshBalance(){
+  const b=balance(); $("#balChip").textContent=b.toLocaleString(); $("#balBig").textContent=b.toLocaleString();
+  const u=currentUser(), area=$("#authArea");
+  if(u){ area.innerHTML = `<span class="chip">👤 ${u.name.split(" ")[0]}</span> <button class="btn-ghost btn-sm" id="btnOut">Log out</button>`;
+    $("#btnOut").onclick=()=>{ store.session=""; refreshBalance() };
+  } else { area.innerHTML = `<button class="btn-ghost btn-sm" id="btnLogin">Log in</button> <button class="btn btn-sm" id="btnSignup">Sign up free</button>`;
+    $("#btnLogin").onclick=()=>openAuth("login"); $("#btnSignup").onclick=()=>openAuth("signup"); }
+}
+
+/* ================= AUTH UI ================= */
+let authMode="signup";
+function openAuth(mode){ authMode=mode; $("#authModal").style.display="flex"; $("#authErr").textContent="";
+  const su = mode==="signup";
+  $("#authTitle").textContent = su? "Create your free account":"Welcome back";
+  $("#authSub").textContent = su? `Get ${WELCOME_CREDITS.toLocaleString()} welcome credits instantly.`:"Log in to use your credits.";
+  $("#nameField").style.display = su? "block":"none";
+  $("#authGo").textContent = su? `Sign up & claim ${WELCOME_CREDITS.toLocaleString()} credits`:"Log in";
+  $("#authSwitch").innerHTML = su? `Already have an account? <a href="#" id="authToggle">Log in</a>`:`New here? <a href="#" id="authToggle">Create a free account</a>`;
+  $("#authToggle").onclick=e=>{e.preventDefault(); openAuth(su?"login":"signup")};
+}
+$("#authGo").onclick = async ()=>{
+  const email=$("#auEmail").value.trim().toLowerCase(), pass=$("#auPass").value, err=$("#authErr");
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent="Please enter a valid email address.";
+  if(pass.length<6) return err.textContent="Password must be at least 6 characters.";
+  const users=store.users, hash=await sha256(email+":"+pass);
+  if(authMode==="signup"){
+    const name=$("#auName").value.trim(); if(!name) return err.textContent="Please enter your name.";
+    if(users[email]) return err.textContent="This email already has an account — please log in instead.";
+    users[email]={name, email, pass:hash, credits:WELCOME_CREDITS, created:Date.now()};
+    store.users=users; store.session=email; closeModals(); refreshBalance();
+    setStatus(`🎉 Welcome, ${name.split(" ")[0]}! ${WELCOME_CREDITS.toLocaleString()} credits added to your account.`,"ok");
+  } else {
+    const u=users[email];
+    if(!u || u.pass!==hash) return err.textContent="Email or password is incorrect.";
+    store.session=email; closeModals(); refreshBalance(); setStatus(`Welcome back, ${u.name.split(" ")[0]}!`,"ok");
+  }
+};
+
+/* ================= PRICING / BUY ================= */
+let buyPack=null;
+function renderPacks(){
+  $("#packGrid").innerHTML = PACKS.map(p=>`
+   <div class="pack ${p.hot?"hot":""}">${p.hot?'<div class="tag">MOST POPULAR</div>':""}
+    <h3>${p.name}</h3><div class="price">$${p.price}</div>
+    <div class="credits">${p.credits.toLocaleString()} credits</div>
+    <div class="per">${p.note}<br>≈ ${Math.round(p.credits/900)} min of narration</div>
+    <ul><li>All 11 voices included</li><li>MP3 + WAV downloads</li><li>Commercial use allowed</li><li>Credits never expire</li></ul>
+    <button class="btn ${p.hot?"btn-teal":""}" style="width:100%" onclick="openBuy('${p.id}')">Buy ${p.name}</button>
+   </div>`).join("");
+}
+window.openBuy = id=>{
+  buyPack = PACKS.find(p=>p.id===id);
+  $("#buyTitle").textContent = `${buyPack.name} pack — $${buyPack.price}`;
+  $("#buyDesc").innerHTML = `You get <b style="color:var(--txt)">${buyPack.credits.toLocaleString()} credits</b> (≈ ${Math.round(buyPack.credits/900)} minutes of voiceover). Credits are added to your account right after payment and never expire.`;
+  const link = PAYMENT_LINKS[buyPack.id];
+  $("#buyNote").textContent = link? "Secure checkout opens in a new tab. Use the same email as your Adam Voice account so credits land in the right place."
+    : "Online card checkout is being activated for this store right now. Your free credits already work — sign up to claim 1,000 free credits while checkout finishes setting up.";
+  $("#buyModal").style.display="flex";
+};
+$("#buyGo").onclick=()=>{ const link=PAYMENT_LINKS[buyPack.id]; if(link) window.open(link,"_blank"); else { closeModals(); openAuth("signup"); } };
+
+/* ================= STUDIO ================= */
+function renderVoices(){
+  $("#voiceGrid").innerHTML = VOICES.map(v=>`<button class="voice ${v.id===selectedVoice?"sel":""}" data-v="${v.id}"><b>${v.name}</b><small>${v.desc}</small></button>`).join("");
+  document.querySelectorAll(".voice").forEach(b=>b.onclick=()=>{ selectedVoice=b.dataset.v; renderVoices() });
+}
+function textStats(){ const t=$("#txt").value; const chars=t.length; const words=t.trim()? t.trim().split(/\s+/).length:0;
+  $("#stChars").textContent=chars.toLocaleString(); $("#stWords").textContent=words.toLocaleString();
+  $("#stMins").textContent=(words/150).toFixed(1)+" min"; $("#stCost").textContent=chars.toLocaleString(); return chars }
+$("#txt").addEventListener("input", textStats);
+$("#spd").addEventListener("input", e=> $("#spdVal").textContent = Number(e.target.value).toFixed(2)+"×");
+function setStatus(msg, cls){ const s=$("#status"); s.textContent=msg; s.className="status "+(cls||"") }
+function closeModals(){ document.querySelectorAll(".modal-bg").forEach(m=>m.style.display="none") }
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeModals);
+document.querySelectorAll(".modal-bg").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) closeModals() }));
+$("#btnHistory").onclick=()=>{ const u=currentUser(); const key=u? "av_hist_"+u.email:"av_hist_guest";
+  const h=JSON.parse(localStorage.getItem(key)||"[]");
+  $("#histList").innerHTML = h.length? h.map(x=>`<div class="hist-item"><span><b>${x.voice}</b> · ${x.title}…</span><span>-${x.cost.toLocaleString()} cr</span></div>`).join("") : `<p class="note">No generations yet. Your voiceovers will appear here.</p>`;
+  $("#histModal").style.display="flex"; };
+
+/* ------- audio helpers ------- */
+function wavBlob(samples, sr){
+  const buf=new ArrayBuffer(44+samples.length*2), v=new DataView(buf);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  ws(0,"RIFF"); v.setUint32(4,36+samples.length*2,true); ws(8,"WAVEfmt "); v.setUint32(16,16,true);
+  v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,sr,true); v.setUint32(28,sr*2,true);
+  v.setUint16(32,2,true); v.setUint16(34,16,true); ws(36,"data"); v.setUint32(40,samples.length*2,true);
+  for(let i=0;i<samples.length;i++){ const s=Math.max(-1,Math.min(1,samples[i])); v.setInt16(44+i*2, s*0x7FFF, true) }
+  return new Blob([buf],{type:"audio/wav"});
+}
+function mp3Blob(samples, sr){
+  if(typeof Mp3Encoder==="undefined") return null;
+  const enc=new Mp3Encoder(1, sr, 128); const parts=[]; const block=1152;
+  const i16=new Int16Array(samples.length);
+  for(let i=0;i<samples.length;i++) i16[i]=Math.max(-1,Math.min(1,samples[i]))*0x7FFF;
+  for(let i=0;i<i16.length;i+=block){ const d=enc.encodeBuffer(i16.subarray(i,i+block)); if(d.length) parts.push(new Int8Array(d)) }
+  const end=enc.flush(); if(end.length) parts.push(new Int8Array(end));
+  return new Blob(parts,{type:"audio/mpeg"});
+}
+function splitText(text, max){
+  const clean=text.replace(/\s+/g," ").trim();
+  const sents=clean.match(/[^.!?…]+[.!?…]*["')\]]*\s*/g)||[clean]; const chunks=[]; let cur="";
+  for(const s of sents){ if((cur+s).length<=max) cur+=s;
+    else { if(cur) chunks.push(cur.trim()); if(s.length<=max) cur=s;
+      else { for(let i=0;i<s.length;i+=max){ const part=s.slice(i,i+max); if(part.trim()) chunks.push(part.trim()) } cur="" } } }
+  if(cur.trim()) chunks.push(cur.trim()); return chunks.filter(Boolean);
+}
+
+/* ------- generation (Kokoro in-browser) ------- */
+let tts=null, lastWav=null, lastSamples=null, lastRate=24000;
+async function loadModel(){
+  if(tts) return tts;
+  setStatus("⏳ Downloading the AI voice model (one time only, ~90 MB)…");
+  const { KokoroTTS } = await import("https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.js");
+  tts = await KokoroTTS.from_pretrained("onnx-community/Kokoro-82M-v1.0-ONNX", { dtype:"q8", device:"wasm",
+    progress_callback: p=>{ if(p && p.progress!=null){ const pr=$("#prog"); pr.style.display="block"; pr.value=Math.round(p.progress) } } });
+  return tts;
+}
+$("#btnGen").onclick = async ()=>{
+  const text=$("#txt").value.trim(); const cost=textStats();
+  if(!text) return setStatus("Please paste or type your script first.","err");
+  if(cost>balance()){ setStatus(`You need ${cost.toLocaleString()} credits but only have ${balance().toLocaleString()}. `,"err");
+    if(!currentUser()) openAuth("signup"); else openBuy("creator"); return; }
+  const btn=$("#btnGen"); btn.disabled=true; const pr=$("#prog"); pr.style.display="block"; pr.value=0;
+  try{
+    const model=await loadModel();
+    const chunks=splitText(text, 280); const speed=Number($("#spd").value);
+    const parts=[]; let rate=24000;
+    for(let i=0;i<chunks.length;i++){
+      setStatus(`🎙️ Generating part ${i+1} of ${chunks.length}…`);
+      pr.value=Math.round((i/chunks.length)*100);
+      const audio=await model.generate(chunks[i], { voice:selectedVoice, speed });
+      rate=audio.sampling_rate||24000; parts.push(audio.audio);
+      if(i<chunks.length-1) parts.push(new Float32Array(Math.floor(rate*0.18))); // small pause between sentences
+    }
+    const total=parts.reduce((a,p)=>a+p.length,0); const merged=new Float32Array(total);
+    let off=0; for(const p of parts){ merged.set(p,off); off+=p.length }
+    lastSamples=merged; lastRate=rate; lastWav=wavBlob(merged, rate);
+    $("#player").src=URL.createObjectURL(lastWav); $("#audioBox").style.display="block";
+    spend(cost); addHistory({voice:VOICES.find(v=>v.id===selectedVoice).name, title:text.slice(0,42), cost, at:Date.now()});
+    pr.value=100; setStatus(`✅ Done! ${cost.toLocaleString()} credits used. Your voiceover is ready below.`,"ok");
+  }catch(e){ console.error(e); setStatus("Something went wrong while generating. Please check your internet for the first model download, then try again.","err"); }
+  btn.disabled=false;
+};
+$("#btnWav").onclick=()=>{ if(!lastWav) return; const a=document.createElement("a"); a.href=URL.createObjectURL(lastWav); a.download="adam-voice-voiceover.wav"; a.click(); };
+$("#btnMp3").onclick=()=>{ if(!lastSamples) return; const b=mp3Blob(lastSamples,lastRate);
+  if(!b) return setStatus("MP3 encoder is still loading — please use the WAV download, or try MP3 again in a few seconds.","err");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="adam-voice-voiceover.mp3"; a.click(); };
+
+/* init */
+renderVoices(); renderPacks(); refreshBalance(); textStats();
+$("#btnLogin") && ($("#btnLogin").onclick=()=>openAuth("login"));
+$("#btnSignup") && ($("#btnSignup").onclick=()=>openAuth("signup"));
+</script>
+</body>
+</html>
