@@ -5,109 +5,155 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CreativeSakool.pk — Short-Form Video Editing That Grows Creators & Brands</title>
 <meta name="description" content="Professional Reels, TikToks & YouTube Shorts editing for creators and small businesses in the US & UK. First video FREE. 24–48h turnaround. 7 videos $120 · 30 videos $500.">
+<link rel="icon" href="logo.jpg">
 <style>
   :root{
-    --bg:#06060a; --panel:#0e0e16; --panel2:#151522; --line:#242433;
-    --text:#f5f5fa; --muted:#a6a6ba; --violet:#7c5cff; --cyan:#25f4ee; --pink:#fe2c55;
-    --gold:#ffd166; --green:#3ddc84; --radius:20px;
+    --bg:#ffffff; --bg2:#f4f4f6; --panel:#ffffff; --ink:#101014; --ink2:#1b1b20;
+    --muted:#5d5d68; --line:#e4e4ea; --grey:#8e8e96; --soft:#ececf0;
+    --green:#16a34a; --wa:#22c55e; --radius:20px;
+    --shadow:0 18px 44px rgba(16,16,20,.10);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;line-height:1.6;overflow-x:hidden}
+  body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;line-height:1.6;overflow-x:hidden}
   a{color:inherit;text-decoration:none}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-  /* glow background */
-  .glow{position:absolute;border-radius:50%;filter:blur(120px);opacity:.35;pointer-events:none}
-  /* header */
-  header{position:sticky;top:0;z-index:60;background:rgba(6,6,10,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:14px}
-  .logo{font-weight:900;font-size:21px;letter-spacing:.2px;white-space:nowrap}
-  .logo span{background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .logo small{display:block;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:3px}
-  .navlinks{display:flex;gap:24px;align-items:center;font-size:14.5px;color:var(--muted)}
-  .navlinks a:hover{color:var(--text)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;position:relative;z-index:2}
+
+  /* ---------- cursor spotlight + progress ---------- */
+  #spotlight{position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:radial-gradient(560px circle at var(--mx,50%) var(--my,20%), rgba(16,16,20,.07), transparent 65%)}
+  #pbar{position:fixed;top:0;left:0;height:3px;background:var(--ink);width:0;z-index:99}
+  #cursorDot{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--ink);pointer-events:none;z-index:98;
+    transform:translate(-50%,-50%);transition:width .18s,height .18s,opacity .2s;opacity:0}
+  #cursorRing{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(16,16,20,.45);pointer-events:none;z-index:98;
+    transform:translate(-50%,-50%);opacity:0}
+  @media(hover:none){#cursorDot,#cursorRing{display:none}}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:14px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);object-fit:cover}
+  .logo{font-weight:900;font-size:20px;letter-spacing:.2px;line-height:1.1}
+  .logo small{display:block;font-size:9.5px;color:var(--muted);font-weight:700;letter-spacing:3px}
+  .navlinks{display:flex;gap:24px;align-items:center;font-size:14.5px;color:var(--muted);font-weight:600}
+  .navlinks a:hover{color:var(--ink)}
   @media(max-width:820px){.navlinks a:not(.btn){display:none}}
-  .btn{display:inline-block;background:linear-gradient(90deg,var(--violet),var(--pink));color:#fff;font-weight:800;
-       padding:13px 28px;border-radius:999px;border:none;cursor:pointer;font-size:15px;
-       box-shadow:0 10px 32px rgba(124,92,255,.35);transition:transform .15s, box-shadow .15s}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(254,44,85,.35)}
-  .btn.cyan{background:linear-gradient(90deg,#0fd8d2,var(--cyan));color:#03211f;box-shadow:0 10px 32px rgba(37,244,238,.25)}
-  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
-  .btn.wa{background:#22c55e;color:#04160a;box-shadow:0 10px 32px rgba(34,197,94,.3)}
-  /* trust bar */
-  .trustbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+  .btn{display:inline-block;background:var(--ink);color:#fff;font-weight:800;padding:13px 28px;border-radius:999px;
+       border:1.5px solid var(--ink);cursor:pointer;font-size:15px;transition:transform .18s,background .18s,color .18s;will-change:transform}
+  .btn:hover{background:#fff;color:var(--ink)}
+  .btn.light{background:#fff;color:var(--ink)}
+  .btn.light:hover{background:var(--ink);color:#fff}
+  .btn.wa{background:var(--wa);border-color:var(--wa);color:#04160a}
+  .btn.wa:hover{background:#fff;color:#04160a}
+
+  .trustbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);position:relative;z-index:2}
   .pill{border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:var(--panel)}
-  .pill b{color:var(--text)}
-  /* hero */
-  .hero{position:relative;text-align:center;padding:84px 0 64px}
-  .badge{display:inline-block;background:rgba(61,220,132,.12);color:#7ce8ab;border:1px solid rgba(61,220,132,.45);
-         padding:7px 18px;border-radius:999px;font-size:13.5px;font-weight:800;letter-spacing:.3px}
-  h1{font-size:clamp(38px,6.4vw,66px);line-height:1.06;margin:24px auto 18px;max-width:880px;font-weight:900;letter-spacing:-.5px}
-  h1 .grad{background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pill b{color:var(--ink)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;text-align:center;padding:78px 0 30px;overflow:hidden}
+  .orb{position:absolute;border-radius:50%;border:1.5px solid var(--soft);pointer-events:none;z-index:0}
+  .orb.fill{background:var(--bg2);border:none}
+  .heroLogo{width:104px;height:104px;border-radius:50%;border:1px solid var(--line);object-fit:cover;box-shadow:var(--shadow);
+    animation:floaty 5s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .badge{display:inline-block;background:var(--ink);color:#fff;padding:7px 18px;border-radius:999px;font-size:13px;font-weight:800;letter-spacing:.4px;margin-top:22px}
+  .badge .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:7px;animation:blink 1.4s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  h1{font-size:clamp(38px,6.4vw,68px);line-height:1.05;margin:24px auto 18px;max-width:900px;font-weight:900;letter-spacing:-1px}
+  h1 .playword{display:inline-flex;align-items:center;gap:10px}
+  h1 .playico{display:inline-flex;width:.92em;height:.92em;border-radius:50%;background:var(--ink);color:#fff;align-items:center;justify-content:center;font-size:.42em;vertical-align:middle;transition:transform .3s}
+  h1:hover .playico{transform:rotate(360deg) scale(1.12)}
   .hero p{color:var(--muted);font-size:19.5px;max-width:680px;margin:0 auto 32px}
   .herocta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
   .hero small{display:block;margin-top:16px;color:var(--muted);font-size:13.5px}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:860px;margin:52px auto 0}
-  .stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 10px}
-  .stat .n{font-size:30px;font-weight:900}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:880px;margin:50px auto 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 10px;transition:transform .2s,box-shadow .2s}
+  .stat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .stat .n{font-size:31px;font-weight:900}
   .stat .l{color:var(--muted);font-size:13px;margin-top:2px}
   @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
-  /* sections */
-  section{padding:64px 0;position:relative}
-  h2{font-size:clamp(28px,4.2vw,42px);font-weight:900;text-align:center;margin-bottom:12px;letter-spacing:-.3px}
-  h2 .grad{background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* marquee */
+  .marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2);padding:13px 0;margin-top:64px;position:relative;z-index:2}
+  .mtrack{display:flex;gap:44px;white-space:nowrap;width:max-content;animation:scrollx 30s linear infinite;font-weight:800;font-size:14.5px;letter-spacing:1.6px;color:var(--ink2)}
+  .marquee:hover .mtrack{animation-play-state:paused}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+  .mtrack span::after{content:"▶";color:var(--grey);margin-left:44px;font-size:11px}
+
+  /* ---------- sections / reveal ---------- */
+  section{padding:66px 0;position:relative}
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  h2{font-size:clamp(28px,4.2vw,42px);font-weight:900;text-align:center;margin-bottom:12px;letter-spacing:-.5px}
   .sub{color:var(--muted);text-align:center;max-width:640px;margin:0 auto 40px;font-size:16.5px}
-  /* portfolio */
-  .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
-  .fbtn{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:8px 20px;border-radius:999px;font-size:14px;font-weight:700;cursor:pointer}
-  .fbtn.active{background:linear-gradient(90deg,var(--violet),var(--pink));color:#fff;border-color:transparent}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:transform .18s,border-color .18s;display:block}
-  .card:hover{transform:translateY(-4px);border-color:var(--violet)}
-  .card .ico{font-size:34px;margin-bottom:12px}
-  .card h3{font-size:19px;margin-bottom:6px}
-  .card p{color:var(--muted);font-size:14.5px;margin-bottom:16px}
-  .card .watch{font-weight:800;font-size:14px;color:var(--cyan)}
-  .card .tagchip{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1px;color:#0a0a12;background:var(--gold);padding:3px 10px;border-radius:6px;margin-bottom:12px;text-transform:uppercase}
-  .card .tagchip.hot{background:var(--pink);color:#fff}
-  .card .tagchip.cool{background:var(--cyan)}
-  /* services */
-  .svc{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  @media(max-width:900px){.svc{grid-template-columns:1fr}}
-  .svccard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px}
-  .svccard .ico{font-size:30px;margin-bottom:10px}
-  .svccard h3{font-size:19px;margin-bottom:8px}
-  .svccard p,.svccard li{color:var(--muted);font-size:15px}
-  .svccard ul{list-style:none;margin-top:12px}
-  .svccard li{padding:5px 0}
-  .check{color:var(--green);font-weight:900;margin-right:8px}
-  /* compare */
-  .compare{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  @media(max-width:900px){.compare{grid-template-columns:1fr}}
-  .ccard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
-  .ccard.mid{border-color:var(--violet);background:linear-gradient(180deg,rgba(124,92,255,.12),var(--panel));position:relative;box-shadow:0 16px 44px rgba(124,92,255,.18)}
-  .ccard h3{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px}
-  .ccard .price{font-size:30px;font-weight:900;margin:8px 0}
-  .ccard p,.ccard li{color:var(--muted);font-size:14.5px}
-  .ccard ul{list-style:none;margin-top:10px}
-  .ccard li{padding:4px 0}
-  .tag{position:absolute;top:-13px;right:18px;background:linear-gradient(90deg,var(--violet),var(--pink));color:#fff;font-size:11px;font-weight:800;padding:5px 13px;border-radius:999px;letter-spacing:.5px}
-  /* steps */
+
+  /* ---------- video portfolio ---------- */
+  .vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:980px){.vgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.vgrid{grid-template-columns:1fr}}
+  .vcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    transition:box-shadow .25s;transform-style:preserve-3d;will-change:transform;position:relative}
+  .vcard:hover{box-shadow:var(--shadow)}
+  .vcard::before{content:"";position:absolute;inset:0;border-radius:var(--radius);pointer-events:none;z-index:3;
+    background:radial-gradient(340px circle at var(--cx,50%) var(--cy,50%), rgba(16,16,20,.08), transparent 60%)}
+  .player{position:relative;aspect-ratio:9/16;max-height:520px;width:100%;background:#0c0c0f;cursor:pointer;overflow:hidden}
+  .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .facade{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    background:linear-gradient(180deg,#17171c,#0c0c0f);color:#fff;transition:opacity .3s}
+  .facade .ring{width:74px;height:74px;border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;
+    font-size:26px;padding-left:5px;transition:transform .25s;animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.45)}70%{box-shadow:0 0 0 20px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+  .vcard:hover .facade .ring{transform:scale(1.14)}
+  .facade .tap{font-size:13px;letter-spacing:2px;font-weight:700;color:#c9c9d2}
+  .vmeta{padding:18px 20px}
+  .vmeta h3{font-size:18px;margin-bottom:4px}
+  .vmeta p{color:var(--muted);font-size:14px}
+  .vmeta .niche{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;background:var(--soft);border-radius:6px;padding:3px 9px;margin-bottom:9px}
+
+  /* niche grid */
+  .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:44px 0 26px}
+  .fbtn{border:1.5px solid var(--ink);background:#fff;color:var(--ink);padding:8px 20px;border-radius:999px;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s}
+  .fbtn.active,.fbtn:hover{background:var(--ink);color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:540px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:block;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--cx,50%) var(--cy,50%), rgba(16,16,20,.07), transparent 60%);pointer-events:none}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .card .ico{font-size:27px;margin-bottom:8px}
+  .card h3{font-size:16.5px;margin-bottom:4px}
+  .card p{color:var(--muted);font-size:13.5px}
+  .card .watch{font-weight:800;font-size:13px}
+
+  /* services / compare / steps */
+  .alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .svc,.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  @media(max-width:900px){.steps{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:900px){.svc,.compare{grid-template-columns:1fr}.steps{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:520px){.steps{grid-template-columns:1fr}}
-  .step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
-  .step .n{font-size:13px;font-weight:900;color:var(--cyan);letter-spacing:2px}
-  .step h3{font-size:19px;margin:8px 0}
-  .step p{color:var(--muted);font-size:14.5px}
+  .svccard,.ccard,.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+  .svccard:hover,.ccard:hover,.step:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .svccard .ico{font-size:29px;margin-bottom:10px}
+  .svccard h3,.step h3{font-size:19px;margin-bottom:8px}
+  .svccard p,.svccard li,.ccard p,.ccard li,.step p{color:var(--muted);font-size:14.5px}
+  .svccard ul,.ccard ul{list-style:none;margin-top:10px}
+  .svccard li,.ccard li{padding:4px 0}
+  .check{color:var(--green);font-weight:900;margin-right:8px}
+  .ccard.mid{border:2px solid var(--ink)}
+  .ccard h3{font-size:13.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px}
+  .ccard .price{font-size:29px;font-weight:900;margin:8px 0;color:var(--ink)}
+  .tag{position:absolute;top:16px;right:16px;background:var(--ink);color:#fff;font-size:10.5px;font-weight:800;padding:4px 11px;border-radius:999px;letter-spacing:.6px}
+  .step .n{font-size:13px;font-weight:900;letter-spacing:2px;color:var(--grey)}
+
   /* pricing */
   .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
   @media(max-width:900px){.pricing{grid-template-columns:1fr}}
-  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:36px 30px;display:flex;flex-direction:column;position:relative}
-  .pcard.pop{border-color:var(--pink);background:linear-gradient(180deg,rgba(254,44,85,.09),var(--panel));box-shadow:0 18px 50px rgba(254,44,85,.16)}
-  .pcard h3{font-size:16px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:36px 30px;display:flex;flex-direction:column;position:relative;transition:transform .2s,box-shadow .2s}
+  .pcard:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+  .pcard.pop{border:2.5px solid var(--ink)}
+  .pcard h3{font-size:15px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
   .pcard .amount{font-size:54px;font-weight:900;line-height:1.05;margin:10px 0 2px}
   .pcard .per{color:var(--muted);font-size:14.5px;margin-bottom:18px}
   .pcard .per b{color:var(--green)}
@@ -115,38 +161,41 @@
   .pcard li{padding:6px 0}
   .pcard .btn{margin-top:auto;text-align:center}
   .single{text-align:center;color:var(--muted);margin-top:22px;font-size:15.5px}
-  .single b{color:var(--text)}
-  /* guarantee + faq */
-  .guarantee{max-width:780px;margin:0 auto;background:var(--panel);border:1px dashed var(--gold);border-radius:var(--radius);padding:34px;text-align:center}
-  .guarantee .big{font-size:26px;font-weight:900;color:var(--gold)}
+  .single b{color:var(--ink)}
+
+  .guarantee{max-width:780px;margin:0 auto;background:var(--panel);border:2px dashed var(--ink);border-radius:var(--radius);padding:34px;text-align:center}
+  .guarantee .big{font-size:25px;font-weight:900}
   .guarantee p{color:var(--muted);margin-top:8px}
   .faq{max-width:780px;margin:0 auto}
-  details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px;transition:box-shadow .2s}
+  details:hover{box-shadow:var(--shadow)}
   summary{font-weight:800;cursor:pointer;font-size:16px}
   details p{color:var(--muted);margin-top:10px;font-size:15px}
-  /* final cta */
-  .finalcta{text-align:center;background:linear-gradient(180deg,rgba(124,92,255,.14),rgba(254,44,85,.08));border:1px solid var(--line);border-radius:28px;padding:56px 30px}
-  .finalcta h2{margin-bottom:14px}
-  .finalcta p{color:var(--muted);max-width:560px;margin:0 auto 28px}
-  footer{border-top:1px solid var(--line);padding:38px 0;color:var(--muted);font-size:14px}
-  .foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
-  .foot a:hover{color:var(--text)}
-  .wa-float{position:fixed;right:20px;bottom:20px;z-index:70;background:#22c55e;color:#04160a;font-weight:900;
-            padding:14px 22px;border-radius:999px;box-shadow:0 12px 34px rgba(34,197,94,.4);font-size:15px}
-  .wa-float:hover{transform:translateY(-2px)}
+
+  .finalcta{text-align:center;background:var(--ink);color:#fff;border-radius:28px;padding:56px 30px;position:relative;overflow:hidden}
+  .finalcta h2{color:#fff}
+  .finalcta p{color:#c9c9d2;max-width:560px;margin:0 auto 28px}
+  .finalcta .btn{border-color:#fff}
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2;background:#fff}
+  .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+  .foot .fbrand{display:flex;align-items:center;gap:10px}
+  .foot img{width:34px;height:34px;border-radius:50%;border:1px solid var(--line)}
+  .foot a:hover{color:var(--ink)}
+  .wa-float{position:fixed;right:20px;bottom:20px;z-index:70;background:var(--wa);color:#04160a;font-weight:900;
+            padding:14px 22px;border-radius:999px;box-shadow:0 12px 34px rgba(34,197,94,.4);font-size:15px;transition:transform .18s}
+  .wa-float:hover{transform:translateY(-3px) scale(1.03)}
 </style>
 </head>
 <body>
 
+<div id="spotlight"></div><div id="pbar"></div><div id="cursorDot"></div><div id="cursorRing"></div>
+
 <header>
   <div class="wrap nav">
-    <a class="logo" href="#">creative<span>sakool</span>.pk<small>SHORT-FORM VIDEO EDITING</small></a>
+    <a class="brand" href="#"><img src="logo.jpg" alt="CreativeSakool logo"><span class="logo">creativesakool.pk<small>SHORT-FORM VIDEO EDITING</small></span></a>
     <nav class="navlinks">
-      <a href="#work">Portfolio</a>
-      <a href="#services">Services</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a class="btn" href="#free">Get 1 FREE Video</a>
+      <a href="#work">Portfolio</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+      <a class="btn magnetic" href="#free">Get 1 FREE Video</a>
     </nav>
   </div>
 </header>
@@ -154,231 +203,286 @@
 <div class="wrap trustbar">
   <span class="pill">🎬 <b>First video FREE</b> — no card, no risk</span>
   <span class="pill">⚡ <b>24–48h</b> turnaround</span>
-  <span class="pill">🇺🇸🇬🇧 Trusted by creators & businesses in the <b>US & UK</b></span>
+  <span class="pill">🇺🇸🇬🇧 Creators & businesses in the <b>US & UK</b></span>
   <span class="pill">♾️ Revisions until you love it</span>
 </div>
 
 <div class="hero">
-  <div class="glow" style="width:480px;height:480px;background:#7c5cff;top:-160px;left:-120px"></div>
-  <div class="glow" style="width:420px;height:420px;background:#fe2c55;top:-100px;right:-120px"></div>
+  <div class="orb fill" data-depth="18" style="width:340px;height:340px;top:-90px;left:-110px"></div>
+  <div class="orb" data-depth="-26" style="width:230px;height:230px;top:30px;right:-60px"></div>
+  <div class="orb fill" data-depth="12" style="width:130px;height:130px;bottom:6px;left:9%"></div>
+  <div class="orb" data-depth="-14" style="width:90px;height:90px;bottom:44px;right:12%"></div>
   <div class="wrap">
-    <span class="badge">● NOW BOOKING — 3 SPOTS LEFT THIS WEEK</span>
-    <h1>Scroll-Stopping Short Videos, <span class="grad">Edited For You.</span></h1>
+    <img class="heroLogo" data-depth="6" src="logo.jpg" alt="CreativeSakool logo">
+    <div><span class="badge"><span class="dot"></span>NOW BOOKING — 3 SPOTS LEFT THIS WEEK</span></div>
+    <h1>Scroll-Stopping Short Videos, <span class="playword">Edited <span class="playico">▶</span> For You.</span></h1>
     <p>You film it. We turn it into Reels, TikToks & Shorts that hook in the first 2 seconds — captions, hooks, sound design and pacing done for you, delivered in 24–48 hours.</p>
     <div class="herocta">
-      <a class="btn" href="#free">🎬 Claim Your FREE Test Video</a>
-      <a class="btn ghost" href="#work">▶ Watch the Portfolio</a>
+      <a class="btn magnetic" href="#free">🎬 Claim Your FREE Test Video</a>
+      <a class="btn light magnetic" href="#work">▶ Watch Videos Below</a>
     </div>
     <small>No contracts · No upfront payment for your test video · You only pay when you love the edit</small>
     <div class="stats">
-      <div class="stat"><div class="n">26+</div><div class="l">Niches edited</div></div>
-      <div class="stat"><div class="n">24–48h</div><div class="l">Fast delivery</div></div>
-      <div class="stat"><div class="n">$17</div><div class="l">Per video on packs</div></div>
-      <div class="stat"><div class="n">100%</div><div class="l">Done-for-you</div></div>
+      <div class="stat reveal"><div class="n"><span class="count" data-to="26">0</span>+</div><div class="l">Niches edited</div></div>
+      <div class="stat reveal"><div class="n">24–48h</div><div class="l">Fast delivery</div></div>
+      <div class="stat reveal"><div class="n">$<span class="count" data-to="17">0</span></div><div class="l">Per video on packs</div></div>
+      <div class="stat reveal"><div class="n"><span class="count" data-to="100">0</span>%</div><div class="l">Done-for-you</div></div>
     </div>
   </div>
 </div>
 
+<div class="marquee"><div class="mtrack" id="mtrack">
+  <span>TALKING HEAD</span><span>REAL ESTATE</span><span>GYM & FITNESS</span><span>TRADING</span><span>ADS & UGC</span><span>SPORTS</span><span>TRAVEL</span><span>GAMING</span><span>FASHION</span><span>AI TOOLS</span><span>QUIZ</span><span>2D ANIMATION</span>
+</div></div>
+
 <section id="work">
   <div class="wrap">
-    <h2>Real Work. <span class="grad">Real Niches.</span></h2>
-    <p class="sub">Every card below opens real edited samples from our portfolio — the same quality your first FREE test video will get. Pick your niche and press play.</p>
-    <div class="filters">
-      <button class="fbtn active" data-f="all">All Work</button>
+    <h2 class="reveal">Watch Our Work — <span style="color:var(--grey)">Right Here</span></h2>
+    <p class="sub reveal">No leaving the page. Tap any video and it plays right here — real edits, real clients, the same quality your FREE test video will get.</p>
+    <div class="vgrid" id="vgrid"><!-- video cards injected by JS --></div>
+
+    <div class="filters reveal">
+      <button class="fbtn active" data-f="all">All Niches</button>
       <button class="fbtn" data-f="business">Business</button>
       <button class="fbtn" data-f="creator">Creators</button>
       <button class="fbtn" data-f="lifestyle">Lifestyle</button>
     </div>
     <div class="grid" id="portfolioGrid">
-      <a class="card" data-cat="creator business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/14BO7tw3MjdLEF715qEe5UtHvuTOwijVg">
-        <span class="tagchip hot">Most Requested</span><div class="ico">🎙️</div>
-        <h3>Talking Head Shorts</h3><p>Podcast & coach-style clips with punchy captions, zooms and b-roll that keep viewers watching.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1JundtxDrtpjearYQKLeMZZ_QOAc_1cf1">
-        <span class="tagchip">High Ticket</span><div class="ico">🏡</div>
-        <h3>Real Estate Shorts</h3><p>Listing tours and agent content edited to generate enquiries, not just views.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="lifestyle business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1Loulw8sMO08mp32n9USR-mfSiaskwAx_">
-        <span class="tagchip cool">Trending</span><div class="ico">💪</div>
-        <h3>Gym & Fitness Shorts</h3><p>High-energy workout edits with beat-synced cuts and motivational captions.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="business creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/19_mgSruuG9dJSYa96DNLjLXiIaImIUA0">
-        <span class="tagchip">Finance</span><div class="ico">📈</div>
-        <h3>Trading & Crypto Shorts</h3><p>Fast, chart-driven edits with on-screen callouts that make complex trades simple.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1mf-vByrR2QqTzPoKhg-CqjwgzXanXz6v">
-        <span class="tagchip hot">For Brands</span><div class="ico">📢</div>
-        <h3>Ads Creative Shorts</h3><p>UGC-style ad edits built around a hook, a problem and a call to action.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="creator lifestyle" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1dgofHZBihDS4LJFDca8JZ9Y3sBvbtaDu">
-        <span class="tagchip cool">Viral Format</span><div class="ico">⚽</div>
-        <h3>Sports Videos</h3><p>Match moments, rankings and commentary cut for maximum replay value.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="lifestyle creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/11-g8lvsEV5nOAZa0qyKqAaotYsINXosw">
-        <span class="tagchip">Lifestyle</span><div class="ico">✈️</div>
-        <h3>Travel Shorts</h3><p>Cinematic travel clips with smooth transitions and story-driven pacing.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1xMahsdjzrL5uBWCcBjsieWrne03ryeXh">
-        <span class="tagchip">Gaming</span><div class="ico">🎮</div>
-        <h3>Gaming Shorts</h3><p>Stream highlights and gameplay moments cut at peak-action points.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="business lifestyle" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1uWKw6TmHAqYFW8cuOOofRZGogIjtw0Vr">
-        <span class="tagchip">E-commerce</span><div class="ico">👗</div>
-        <h3>Fashion Shorts</h3><p>Product and styling videos edited to sell — clean, fast and on-brand.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="business lifestyle" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1bpkLGSPSLRNPmVa8stMesihPr9aRy3Km">
-        <span class="tagchip">Auto</span><div class="ico">🚗</div>
-        <h3>Car Shorts</h3><p>Dealer, detailing and car-culture edits with cinematic sound design.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="creator business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1Jzg003Kjhs-z0Zi26SeKHTLlggMm78lH">
-        <span class="tagchip cool">Fast Growing</span><div class="ico">🤖</div>
-        <h3>AI Tools Shorts</h3><p>Tool demos and tutorials edited so viewers actually finish — and click.</p>
-        <span class="watch">▶ Watch samples →</span></a>
-      <a class="card" data-cat="creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1kY5Ck9vyNVqpuPm68ozS8zu02xyzXvri">
-        <span class="tagchip">Animation</span><div class="ico">🎨</div>
-        <h3>2D Animation Shorts</h3><p>Animated explainers and story shorts with character, colour and captions.</p>
-        <span class="watch">▶ Watch samples →</span></a>
+      <a class="card spotlight-card" data-cat="creator business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/14BO7tw3MjdLEF715qEe5UtHvuTOwijVg"><div class="ico">🎙️</div><h3>Talking Head Shorts</h3><p>Podcast & coach clips with punchy captions and zooms.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1JundtxDrtpjearYQKLeMZZ_QOAc_1cf1"><div class="ico">🏡</div><h3>Real Estate Shorts</h3><p>Listing tours and agent content that generates enquiries.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="lifestyle business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1Loulw8sMO08mp32n9USR-mfSiaskwAx_"><div class="ico">💪</div><h3>Gym & Fitness Shorts</h3><p>Beat-synced workout edits with motivational captions.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="business creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/19_mgSruuG9dJSYa96DNLjLXiIaImIUA0"><div class="ico">📈</div><h3>Trading & Crypto Shorts</h3><p>Chart-driven edits that make complex trades simple.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1mf-vByrR2QqTzPoKhg-CqjwgzXanXz6v"><div class="ico">📢</div><h3>Ads Creative Shorts</h3><p>UGC-style ads built around hook, problem, CTA.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="creator lifestyle" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1dgofHZBihDS4LJFDca8JZ9Y3sBvbtaDu"><div class="ico">⚽</div><h3>Sports Videos</h3><p>Match moments and commentary cut for replay value.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="lifestyle creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/11-g8lvsEV5nOAZa0qyKqAaotYsINXosw"><div class="ico">✈️</div><h3>Travel Shorts</h3><p>Cinematic travel clips with smooth transitions.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1xMahsdjzrL5uBWCcBjsieWrne03ryeXh"><div class="ico">🎮</div><h3>Gaming Shorts</h3><p>Stream highlights cut at peak-action points.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="business lifestyle" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1uWKw6TmHAqYFW8cuOOofRZGogIjtw0Vr"><div class="ico">👗</div><h3>Fashion Shorts</h3><p>Product and styling videos edited to sell.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="creator business" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1Jzg003Kjhs-z0Zi26SeKHTLlggMm78lH"><div class="ico">🤖</div><h3>AI Tools Shorts</h3><p>Tool demos edited so viewers finish — and click.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1SqEghbA9skGU-0XaA-4IQzkN4PN4cIbN"><div class="ico">❓</div><h3>Quiz Shorts</h3><p>Guess-and-reveal formats engineered for comments.</p><span class="watch">Open folder →</span></a>
+      <a class="card spotlight-card" data-cat="creator" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1kY5Ck9vyNVqpuPm68ozS8zu02xyzXvri"><div class="ico">🎨</div><h3>2D Animation Shorts</h3><p>Animated explainers and story shorts with captions.</p><span class="watch">Open folder →</span></a>
     </div>
-    <p class="single" style="margin-top:28px">…plus Hook Shorts, Quiz Shorts, Movie Recaps, Montages, B-Roll edits & more — <a style="color:var(--cyan);font-weight:800" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1aTjP2QOYRJES6z1d1tc4lZLSODpXGFD2">browse the full portfolio (26 niches) →</a></p>
+    <p class="single reveal">…plus Hook, Ranking, Montage, Movie Recap, B-Roll & more — <a style="font-weight:800;text-decoration:underline" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1aTjP2QOYRJES6z1d1tc4lZLSODpXGFD2">browse the full portfolio (26 niches) →</a></p>
   </div>
 </section>
 
-<section id="services" style="background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+<section id="services" class="alt">
   <div class="wrap">
-    <h2>Everything Done <span class="grad">For You</span></h2>
-    <p class="sub">Send raw footage. Get back a ready-to-post video. Every edit includes the full retention toolkit used by top-performing channels.</p>
+    <h2 class="reveal">Everything Done For You</h2>
+    <p class="sub reveal">Send raw footage. Get back a ready-to-post video — with the full retention toolkit used by top-performing channels.</p>
     <div class="svc">
-      <div class="svccard"><div class="ico">✂️</div><h3>Short-Form Editing</h3>
-        <p>Reels, TikToks & YouTube Shorts up to 90 seconds, edited for retention from the first frame.</p>
-        <ul><li><span class="check">✓</span>Hook-first structure</li><li><span class="check">✓</span>Animated captions</li><li><span class="check">✓</span>Zooms, cuts & b-roll</li><li><span class="check">✓</span>Sound design & music</li></ul></div>
-      <div class="svccard"><div class="ico">🎯</div><h3>Hooks & Captions</h3>
-        <p>The two things that decide whether a short lives or dies — engineered into every single video.</p>
-        <ul><li><span class="check">✓</span>Pattern-interrupt openings</li><li><span class="check">✓</span>Word-by-word captions</li><li><span class="check">✓</span>On-screen text callouts</li><li><span class="check">✓</span>End-loop pacing</li></ul></div>
-      <div class="svccard"><div class="ico">🚀</div><h3>Content Repurposing</h3>
-        <p>One long video becomes a week of content. Podcasts, livestreams and YouTube videos — sliced into shorts.</p>
-        <ul><li><span class="check">✓</span>Best-moment selection</li><li><span class="check">✓</span>Multi-platform formats</li><li><span class="check">✓</span>Consistent brand style</li><li><span class="check">✓</span>Captions in your fonts</li></ul></div>
+      <div class="svccard reveal"><div class="ico">✂️</div><h3>Short-Form Editing</h3><p>Reels, TikToks & Shorts edited for retention from the first frame.</p><ul><li><span class="check">✓</span>Hook-first structure</li><li><span class="check">✓</span>Animated captions</li><li><span class="check">✓</span>Zooms, cuts & b-roll</li><li><span class="check">✓</span>Sound design & music</li></ul></div>
+      <div class="svccard reveal"><div class="ico">🎯</div><h3>Hooks & Captions</h3><p>The two things that decide whether a short lives or dies — engineered into every video.</p><ul><li><span class="check">✓</span>Pattern-interrupt openings</li><li><span class="check">✓</span>Word-by-word captions</li><li><span class="check">✓</span>On-screen callouts</li><li><span class="check">✓</span>End-loop pacing</li></ul></div>
+      <div class="svccard reveal"><div class="ico">🚀</div><h3>Content Repurposing</h3><p>One long video becomes a week of content — podcasts, streams and YouTube videos sliced into shorts.</p><ul><li><span class="check">✓</span>Best-moment selection</li><li><span class="check">✓</span>Multi-platform formats</li><li><span class="check">✓</span>Consistent brand style</li><li><span class="check">✓</span>Your fonts & colours</li></ul></div>
     </div>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <h2>Why Creators <span class="grad">Switch To Us</span></h2>
-    <p class="sub">Big agencies charge agency prices. Freelancers disappear. We built CreativeSakool to be the option in the middle — professional, fast, and honestly priced.</p>
+    <h2 class="reveal">Why Creators Switch To Us</h2>
+    <p class="sub reveal">Big agencies charge agency prices. Freelancers disappear. We are the option in the middle — professional, fast, honestly priced.</p>
     <div class="compare">
-      <div class="ccard"><h3>Doing It Yourself</h3><div class="price">$0 — but hours lost</div>
-        <ul><li>✕ 3–5 hours editing per video</li><li>✕ Inconsistent posting</li><li>✕ Learning curve never ends</li><li>✕ Filming time gets squeezed</li></ul></div>
-      <div class="ccard mid"><span class="tag">SMART CHOICE</span><h3>CreativeSakool.pk</h3><div class="price">From $17 / video</div>
-        <ul><li><span class="check">✓</span>First video FREE</li><li><span class="check">✓</span>24–48h delivery</li><li><span class="check">✓</span>Revisions until you love it</li><li><span class="check">✓</span>Direct chat with your editor</li></ul></div>
-      <div class="ccard"><h3>Big Agencies</h3><div class="price">$2,500+ / month</div>
-        <ul><li>✕ Long contracts & onboarding</li><li>✕ Slow account-manager chains</li><li>✕ Minimum commitments</li><li>✕ Small creators not a priority</li></ul></div>
+      <div class="ccard reveal"><h3>Doing It Yourself</h3><div class="price">$0 — but hours lost</div><ul><li>✕ 3–5 hours editing per video</li><li>✕ Inconsistent posting</li><li>✕ Learning curve never ends</li></ul></div>
+      <div class="ccard mid reveal"><span class="tag">SMART CHOICE</span><h3>CreativeSakool.pk</h3><div class="price">From $17 / video</div><ul><li><span class="check">✓</span>First video FREE</li><li><span class="check">✓</span>24–48h delivery</li><li><span class="check">✓</span>Revisions until you love it</li><li><span class="check">✓</span>Direct chat with your editor</li></ul></div>
+      <div class="ccard reveal"><h3>Big Agencies</h3><div class="price">$2,500+ / month</div><ul><li>✕ Long contracts & onboarding</li><li>✕ Slow account-manager chains</li><li>✕ Small creators not a priority</li></ul></div>
     </div>
   </div>
 </section>
 
-<section style="background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+<section class="alt">
   <div class="wrap">
-    <h2>From Raw Footage To <span class="grad">Posted — In 4 Steps</span></h2>
-    <p class="sub">Start today with a free test video. If you don't love it, you pay nothing and walk away.</p>
+    <h2 class="reveal">Raw Footage To Posted — In 4 Steps</h2>
+    <p class="sub reveal">Start today with a free test video. If you don't love it, you pay nothing.</p>
     <div class="steps">
-      <div class="step"><div class="n">STEP 01</div><h3>Send Your Footage</h3><p>Message us on WhatsApp or email with your raw clip and any reference video whose style you like.</p></div>
-      <div class="step"><div class="n">STEP 02</div><h3>We Edit — FREE First</h3><p>Your first video is edited completely free with captions, hook, music and sound design.</p></div>
-      <div class="step"><div class="n">STEP 03</div><h3>Review & Revise</h3><p>Tell us what to tweak. We revise until it sounds and looks exactly like your brand.</p></div>
-      <div class="step"><div class="n">STEP 04</div><h3>Post & Grow</h3><p>Love it? Pick a pack and we keep your feed consistent — 7 or 30 videos, always on time.</p></div>
+      <div class="step reveal"><div class="n">STEP 01</div><h3>Send Your Footage</h3><p>WhatsApp or email us your raw clip plus any reference video whose style you like.</p></div>
+      <div class="step reveal"><div class="n">STEP 02</div><h3>We Edit — FREE First</h3><p>Your first video edited completely free: captions, hook, music, sound design.</p></div>
+      <div class="step reveal"><div class="n">STEP 03</div><h3>Review & Revise</h3><p>Tell us what to tweak — we revise until it looks and sounds exactly like your brand.</p></div>
+      <div class="step reveal"><div class="n">STEP 04</div><h3>Post & Grow</h3><p>Love it? Pick a pack and we keep your feed consistent — 7 or 30 videos, always on time.</p></div>
     </div>
   </div>
 </section>
 
 <section id="pricing">
   <div class="wrap">
-    <h2>Simple, Honest <span class="grad">Pricing</span></h2>
-    <p class="sub">No hourly rates. No surprise invoices. Pick a pack, send footage, post consistently.</p>
+    <h2 class="reveal">Simple, Honest Pricing</h2>
+    <p class="sub reveal">No hourly rates. No surprise invoices. Pick a pack, send footage, post consistently.</p>
     <div class="pricing">
-      <div class="pcard" id="free">
-        <h3>Test Video</h3><div class="amount">$0</div><div class="per">Your first video — <b>100% FREE</b></div>
+      <div class="pcard reveal" id="free"><h3>Test Video</h3><div class="amount">$0</div><div class="per">Your first video — <b>100% FREE</b></div>
         <ul><li><span class="check">✓</span>1 full short-form video</li><li><span class="check">✓</span>Captions, hook & music</li><li><span class="check">✓</span>24–48h delivery</li><li><span class="check">✓</span>1 revision round</li><li><span class="check">✓</span>No card required</li></ul>
-        <a class="btn cyan" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%20want%20my%20FREE%20test%20video%20from%20CreativeSakool.pk">Claim FREE Video</a>
-      </div>
-      <div class="pcard pop">
-        <span class="tag">MOST POPULAR</span>
-        <h3>Standard Pack</h3><div class="amount">$120</div><div class="per">7 videos · <b>only $17.14 per video</b></div>
+        <a class="btn wa magnetic" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%20want%20my%20FREE%20test%20video%20from%20CreativeSakool.pk">Claim FREE Video</a></div>
+      <div class="pcard pop reveal"><span class="tag">MOST POPULAR</span><h3>Standard Pack</h3><div class="amount">$120</div><div class="per">7 videos · <b>only $17.14 per video</b></div>
         <ul><li><span class="check">✓</span>7 short-form videos</li><li><span class="check">✓</span>Animated captions & hooks</li><li><span class="check">✓</span>B-roll, music & sound design</li><li><span class="check">✓</span>24–48h turnaround each</li><li><span class="check">✓</span>Revisions until you love it</li><li><span class="check">✓</span>Direct WhatsApp support</li></ul>
-        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%27m%20interested%20in%20the%20Standard%20Pack%20(7%20videos%20for%20%24120)%20from%20CreativeSakool.pk">Get Standard Pack</a>
-      </div>
-      <div class="pcard">
-        <h3>Premium Pack</h3><div class="amount">$500</div><div class="per">30 videos · <b>only $16.67 per video</b></div>
-        <ul><li><span class="check">✓</span>30 short-form videos</li><li><span class="check">✓</span>Everything in Standard</li><li><span class="check">✓</span>Priority delivery queue</li><li><span class="check">✓</span>A month of daily content</li><li><span class="check">✓</span>Consistent brand style guide</li><li><span class="check">✓</span>Priority WhatsApp support</li></ul>
-        <a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%27m%20interested%20in%20the%20Premium%20Pack%20(30%20videos%20for%20%24500)%20from%20CreativeSakool.pk">Get Premium Pack</a>
-      </div>
+        <a class="btn magnetic" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%27m%20interested%20in%20the%20Standard%20Pack%20(7%20videos%20for%20%24120)%20from%20CreativeSakool.pk">Get Standard Pack</a></div>
+      <div class="pcard reveal"><h3>Premium Pack</h3><div class="amount">$500</div><div class="per">30 videos · <b>only $16.67 per video</b></div>
+        <ul><li><span class="check">✓</span>30 short-form videos</li><li><span class="check">✓</span>Everything in Standard</li><li><span class="check">✓</span>Priority delivery queue</li><li><span class="check">✓</span>A month of daily content</li><li><span class="check">✓</span>Brand style guide</li><li><span class="check">✓</span>Priority WhatsApp support</li></ul>
+        <a class="btn light magnetic" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%27m%20interested%20in%20the%20Premium%20Pack%20(30%20videos%20for%20%24500)%20from%20CreativeSakool.pk">Get Premium Pack</a></div>
     </div>
-    <p class="single">Need just one video? <b>Single video — $20.</b> &nbsp;·&nbsp; Custom volume or long-form YouTube editing? <a style="color:var(--cyan);font-weight:800" href="mailto:euriskoediting@gmail.com">Email us for a quote →</a></p>
+    <p class="single reveal">Need just one video? <b>Single video — $20.</b> · Custom volume or long-form? <a style="font-weight:800;text-decoration:underline" href="mailto:euriskoediting@gmail.com">Email us for a quote →</a></p>
   </div>
 </section>
 
-<section style="padding-top:0">
-  <div class="wrap">
-    <div class="guarantee">
-      <div class="big">🛡️ The Love-It Promise</div>
-      <p>Your first video is free, and every paid video is revised until you love it. If we can't get it right, you don't keep paying for edits you won't post. Simple as that.</p>
-    </div>
-  </div>
-</section>
+<section style="padding-top:0"><div class="wrap"><div class="guarantee reveal">
+  <div class="big">🛡️ The Love-It Promise</div>
+  <p>Your first video is free, and every paid video is revised until you love it. If we can't get it right, you don't keep paying for edits you won't post.</p>
+</div></div></section>
 
 <section id="faq" style="padding-top:0">
   <div class="wrap">
-    <h2>Questions, <span class="grad">Answered</span></h2>
-    <p class="sub">Everything creators and businesses usually ask before their free test video.</p>
+    <h2 class="reveal">Questions, Answered</h2>
+    <p class="sub reveal">Everything creators and businesses ask before their free test video.</p>
     <div class="faq">
-      <details><summary>Is the first video really free?</summary><p>Yes — 100% free, no card and no commitment. Send one raw clip, we edit it fully (captions, hook, music, sound design) and deliver it in 24–48 hours. You only pay if you decide to continue with a pack.</p></details>
-      <details><summary>How fast is delivery?</summary><p>Short-form videos are delivered in 24–48 hours each. Premium Pack clients get a priority queue, so a full month of daily content stays ahead of schedule.</p></details>
-      <details><summary>What do I need to send you?</summary><p>Just your raw footage (a Google Drive / Dropbox / WeTransfer link is perfect) and, if you have one, a reference video showing a style you like. We handle everything else.</p></details>
-      <details><summary>Which niches do you edit?</summary><p>26+ niches including talking-head & podcasts, real estate, fitness, trading & finance, sports, gaming, travel, fashion, cars, AI tools, ads/UGC and 2D animation. Browse the portfolio above — if your niche isn't listed, ask us; we probably have samples.</p></details>
-      <details><summary>Can you match my style?</summary><p>Yes. Send 2–3 reference videos and we build your edits around that style — fonts, caption behaviour, pacing, colours and sound — so every video feels consistently yours.</p></details>
+      <details><summary>Is the first video really free?</summary><p>Yes — 100% free, no card, no commitment. Send one raw clip, we edit it fully and deliver in 24–48 hours. You only pay if you continue with a pack.</p></details>
+      <details><summary>How fast is delivery?</summary><p>Short-form videos are delivered in 24–48 hours each. Premium Pack clients get a priority queue.</p></details>
+      <details><summary>What do I need to send?</summary><p>Just your raw footage (Drive / Dropbox / WeTransfer link) and, if you have one, a reference video whose style you like.</p></details>
+      <details><summary>Which niches do you edit?</summary><p>26+ niches — talking head & podcasts, real estate, fitness, trading, sports, gaming, travel, fashion, cars, AI tools, ads/UGC, quiz and 2D animation. Watch the samples above or browse the full portfolio.</p></details>
+      <details><summary>Can you match my style?</summary><p>Yes. Send 2–3 reference videos and we match fonts, captions, pacing, colours and sound so every video feels consistently yours.</p></details>
       <details><summary>How do revisions work?</summary><p>Message us what to change — pacing, captions, music, cuts — and we revise it. Paid packs include revisions until you love the final video.</p></details>
-      <details><summary>How do I pay?</summary><p>Message us on WhatsApp or email to start. We'll confirm your pack, start with your free test video, and arrange payment for the pack only when you're happy to continue. No contracts — packs are one-time, reorder whenever you need more content.</p></details>
+      <details><summary>How do I pay?</summary><p>Start on WhatsApp or email. We confirm your pack, start with your free test video, and arrange payment for the pack only when you're happy to continue. No contracts.</p></details>
     </div>
   </div>
 </section>
 
-<section style="padding-top:0">
-  <div class="wrap">
-    <div class="finalcta" id="contact">
-      <h2>Your Next Video Could Be <span class="grad">Your Best One.</span></h2>
-      <p>Send us one raw clip today. Get a professionally edited short back in 24–48 hours — free. Then decide.</p>
-      <div class="herocta">
-        <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%20want%20my%20FREE%20test%20video%20from%20CreativeSakool.pk">💬 WhatsApp Us — Get FREE Video</a>
-        <a class="btn ghost" href="mailto:euriskoediting@gmail.com?subject=FREE%20Test%20Video%20—%20CreativeSakool.pk">✉️ Email Us</a>
-      </div>
-    </div>
+<section style="padding-top:0"><div class="wrap"><div class="finalcta reveal">
+  <h2>Your Next Video Could Be Your Best One.</h2>
+  <p>Send us one raw clip today. Get a professionally edited short back in 24–48 hours — free. Then decide.</p>
+  <div class="herocta">
+    <a class="btn wa magnetic" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%20want%20my%20FREE%20test%20video%20from%20CreativeSakool.pk">💬 WhatsApp — Get FREE Video</a>
+    <a class="btn light magnetic" href="mailto:euriskoediting@gmail.com?subject=FREE%20Test%20Video%20—%20CreativeSakool.pk">✉️ Email Us</a>
   </div>
-</section>
+</div></div></section>
 
-<footer>
-  <div class="wrap foot">
-    <span>© 2026 <b style="color:var(--text)">creativesakool.pk</b> — CreativeSakool.pk · Short-form video editing for creators & brands worldwide.</span>
-    <span>
-      <a target="_blank" rel="noopener" href="https://www.instagram.com/creativesakool.pk">Instagram</a> ·
-      <a target="_blank" rel="noopener" href="https://wa.me/923417448466">WhatsApp</a> ·
-      <a href="mailto:euriskoediting@gmail.com">euriskoediting@gmail.com</a>
-    </span>
-  </div>
-</footer>
+<footer><div class="wrap foot">
+  <span class="fbrand"><img src="logo.jpg" alt="logo"><span>© 2026 <b style="color:var(--ink)">creativesakool.pk</b> — short-form video editing for creators & brands worldwide.</span></span>
+  <span><a target="_blank" rel="noopener" href="https://www.instagram.com/creativesakool.pk">Instagram</a> · <a target="_blank" rel="noopener" href="https://wa.me/923417448466">WhatsApp</a> · <a href="mailto:euriskoediting@gmail.com">euriskoediting@gmail.com</a></span>
+</div></footer>
 
 <a class="wa-float" target="_blank" rel="noopener" href="https://wa.me/923417448466?text=Hi!%20I%20want%20my%20FREE%20test%20video%20from%20CreativeSakool.pk">💬 FREE Test Video</a>
 
 <script>
-  // Portfolio niche filter
-  document.querySelectorAll('.fbtn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.fbtn').forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      var f = btn.getAttribute('data-f');
-      document.querySelectorAll('#portfolioGrid .card').forEach(function(card){
-        var cats = (card.getAttribute('data-cat') || '').split(' ');
-        card.style.display = (f === 'all' || cats.indexOf(f) !== -1) ? '' : 'none';
-      });
+/* ============ EMBEDDED PORTFOLIO VIDEOS (play inside the page) ============ */
+var VIDEOS = [
+  {id:"1yKegV64erIgjAv495_yRuPEVUpkB4NR8", niche:"Talking Head", title:"Talking Head Short", desc:"Coach-style clip — punchy captions, zooms & b-roll."},
+  {id:"1bjZZlDG8X2Sw4Bik_UL3YIefZr48xtnj", niche:"Real Estate", title:"Real Estate Short", desc:"Property content edited to generate enquiries."},
+  {id:"14XxyJXNRmC0SD-Xjp2yagTW217Osei00", niche:"Gym & Fitness", title:"Gym Short", desc:"Beat-synced workout edit with bold captions."},
+  {id:"1TF2tQlIi8vuRwVMnNE2SLiWJrIB1rGSW", niche:"Trading", title:"Trading Short", desc:"Fast chart-driven edit with on-screen callouts."},
+  {id:"1wQY0kfjYKKC0lDwzi21OK2PpYYKTTBan", niche:"Ads Creative", title:"Ad Creative Short", desc:"Hook → problem → call-to-action structure."},
+  {id:"1GESS3rHLn_Jky7aDoYIoXi0U5Q9Wg4zq", niche:"Travel", title:"Travel Short — Crete, Greece", desc:"Cinematic travel pacing with smooth transitions."},
+  {id:"14r875wmb7BXvY60sK0i_1NLKj1shzL1a", niche:"Fashion", title:"Fashion Short", desc:"Clean, fast product & styling edit."},
+  {id:"19FYwTWOdB5vCMQsjfBna4UvxlMH7Etl4", niche:"AI Tools", title:"AI Tools Short", desc:"Tool demo edited for watch-time and clicks."},
+  {id:"1Hij40LvGhH8sdsStnzZOqf2C7vnKwB5O", niche:"Quiz", title:"Quiz Short", desc:"Guess-and-reveal format built for comments."}
+];
+var grid = document.getElementById('vgrid');
+VIDEOS.forEach(function(v, i){
+  var card = document.createElement('div');
+  card.className = 'vcard tilt reveal';
+  card.innerHTML =
+    '<div class="player" data-vid="'+v.id+'">' +
+      '<div class="facade"><div class="ring">▶</div><div class="tap">TAP TO PLAY</div></div>' +
+    '</div>' +
+    '<div class="vmeta"><span class="niche">'+v.niche+'</span><h3>'+v.title+'</h3><p>'+v.desc+'</p></div>';
+  grid.appendChild(card);
+});
+document.querySelectorAll('.player').forEach(function(p){
+  p.addEventListener('click', function(){
+    if (p.querySelector('iframe')) return;
+    var f = document.createElement('iframe');
+    f.src = 'https://drive.google.com/file/d/' + p.getAttribute('data-vid') + '/preview';
+    f.allow = 'autoplay; encrypted-media; fullscreen';
+    f.setAttribute('allowfullscreen','');
+    p.appendChild(f);
+    var facade = p.querySelector('.facade');
+    if (facade) facade.style.display = 'none';
+  });
+});
+
+/* ============ CURSOR SPOTLIGHT (page reacts to your mouse) ============ */
+var mx = innerWidth/2, my = innerHeight/3, rx = mx, ry = my;
+var dot = document.getElementById('cursorDot'), ring = document.getElementById('cursorRing');
+addEventListener('mousemove', function(e){
+  mx = e.clientX; my = e.clientY;
+  document.documentElement.style.setProperty('--mx', mx + 'px');
+  document.documentElement.style.setProperty('--my', my + 'px');
+  dot.style.opacity = 1; ring.style.opacity = 1;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+  /* hero parallax orbs */
+  document.querySelectorAll('[data-depth]').forEach(function(el){
+    var d = parseFloat(el.getAttribute('data-depth'));
+    el.style.translate = ((mx - innerWidth/2) / d) + 'px ' + ((my - innerHeight/2) / d) + 'px';
+  });
+});
+(function ringLoop(){
+  rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(ringLoop);
+})();
+document.querySelectorAll('a, button, .player, summary').forEach(function(el){
+  el.addEventListener('mouseenter', function(){ ring.style.width='58px'; ring.style.height='58px'; dot.style.width='5px'; dot.style.height='5px'; });
+  el.addEventListener('mouseleave', function(){ ring.style.width='38px'; ring.style.height='38px'; dot.style.width='10px'; dot.style.height='10px'; });
+});
+
+/* ============ 3D TILT + CARD SPOTLIGHT ============ */
+document.querySelectorAll('.tilt, .spotlight-card').forEach(function(card){
+  card.addEventListener('mousemove', function(e){
+    var r = card.getBoundingClientRect();
+    var x = e.clientX - r.left, y = e.clientY - r.top;
+    card.style.setProperty('--cx', (x / r.width * 100) + '%');
+    card.style.setProperty('--cy', (y / r.height * 100) + '%');
+    if (card.classList.contains('tilt')) {
+      card.style.transform = 'perspective(900px) rotateY(' + ((x / r.width - .5) * 7) + 'deg) rotateX(' + ((.5 - y / r.height) * 7) + 'deg)';
+    }
+  });
+  card.addEventListener('mouseleave', function(){ card.style.transform = ''; });
+});
+
+/* ============ MAGNETIC BUTTONS ============ */
+document.querySelectorAll('.magnetic').forEach(function(b){
+  b.addEventListener('mousemove', function(e){
+    var r = b.getBoundingClientRect();
+    b.style.transform = 'translate(' + ((e.clientX - r.left - r.width/2) * .22) + 'px,' + ((e.clientY - r.top - r.height/2) * .32) + 'px)';
+  });
+  b.addEventListener('mouseleave', function(){ b.style.transform = ''; });
+});
+
+/* ============ SCROLL REVEAL + COUNTERS + PROGRESS ============ */
+var io = new IntersectionObserver(function(es){
+  es.forEach(function(en){
+    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  });
+}, {threshold: .12});
+document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+var cio = new IntersectionObserver(function(es){
+  es.forEach(function(en){
+    if (!en.isIntersecting) return;
+    var el = en.target, to = +el.getAttribute('data-to'), t0 = null;
+    function tick(t){ if(!t0) t0 = t; var p = Math.min((t - t0) / 1100, 1);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick); }
+    requestAnimationFrame(tick); cio.unobserve(el);
+  });
+}, {threshold: .6});
+document.querySelectorAll('.count').forEach(function(el){ cio.observe(el); });
+
+addEventListener('scroll', function(){
+  var h = document.documentElement;
+  document.getElementById('pbar').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, {passive: true});
+
+/* duplicate marquee for a seamless loop */
+var mt = document.getElementById('mtrack'); mt.innerHTML += mt.innerHTML;
+
+/* ============ NICHE FILTER ============ */
+document.querySelectorAll('.fbtn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.fbtn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var f = btn.getAttribute('data-f');
+    document.querySelectorAll('#portfolioGrid .card').forEach(function(c){
+      var cats = (c.getAttribute('data-cat') || '').split(' ');
+      c.style.display = (f === 'all' || cats.indexOf(f) !== -1) ? '' : 'none';
     });
   });
+});
 </script>
 </body>
 </html>
